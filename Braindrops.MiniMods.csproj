@@ -55,11 +55,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="NestedDictionary\NestedDictionaryMinimod.cs" />
-    <Compile Include="PrettyText\ClassA.cs" />
-    <Compile Include="PrettyText\ClassX.cs" />
-    <Compile Include="PrettyText\PrettyTextMinimodTests.cs" />
+    <Compile Include="PrettyTypeSignatures\ClassA.cs" />
+    <Compile Include="PrettyTypeSignatures\ClassX.cs" />
+    <Compile Include="PrettyTypeSignatures\PrettyTextMinimodTests.cs" />
     <Compile Include="PrettyText\PrettyTextMinimod.cs" />
-    <Compile Include="PrettyTypeSignatures\PrettySignaturesMinimod.cs" />
+    <Compile Include="PrettyTypeSignatures\PrettyTypeSignaturesMinimod.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -69,7 +69,9 @@
     <None Include="NestedDictionary\NestedDictionaryMinimod.nuspec">
       <SubType>Designer</SubType>
     </None>
-    <None Include="packages.config" />
+    <None Include="packages.config">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="PrettyText\PrettyTextMinimod.nuspec">
       <SubType>Designer</SubType>
     </None>
