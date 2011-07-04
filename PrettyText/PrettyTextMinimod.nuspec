@@ -1,0 +1,21 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+  <metadata>
+    <id>Minimod.PrettyText</id>
+    <version>0.9.6</version>
+    <authors>Lars Corneliussen</authors>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <licenseUrl>http://www.apache.org/licenses/LICENSE-2.0</licenseUrl>
+    <tags>minimod</tags>
+    <summary>A minimod with string extensions, helping whereever you have to shape text to fit into a box.</summary>
+    <description xml:space="preserve">Extends System.String by following methods: 
+    
+      a) ShortenTo(int length): Crops a text to fit into certain number of chars. Appends ... if it has to be cropped; 
+      
+      b) WrapAt(int margin): Nicely wraps a text at the given margin. Tries not to split in the middle of words.
+    </description>
+  </metadata>
+  <files>
+    <file src="PrettyTextMinimod.cs" target="content\Minimods\Minimod.PrettyText.Generated.cs" />
+  </files>
+</package>
