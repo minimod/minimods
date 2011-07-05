@@ -42,8 +42,8 @@
     <Reference Include="pnunit.framework">
       <HintPath>..\packages\NUnit.2.5.10.11092\lib\pnunit.framework.dll</HintPath>
     </Reference>
-    <Reference Include="SharpTestsEx.NUnit">
-      <HintPath>..\Libs\NUnit\SharpTestsEx.NUnit.dll</HintPath>
+    <Reference Include="SharpTestsEx">
+      <HintPath>..\Libs\NUnit\SharpTestsEx.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -54,6 +54,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Linq2Dictionary\Linq2DictionaryMinimod.cs" />
+    <Compile Include="Linq2Dictionary\Linq2DictionaryTests.cs" />
     <Compile Include="NestedDictionary\NestedDictionaryMinimod.cs" />
     <Compile Include="PrettyTypeSignatures\ClassA.cs" />
     <Compile Include="PrettyTypeSignatures\ClassX.cs" />
@@ -66,6 +68,9 @@
     <Content Include="pom.xml" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Linq2Dictionary\Linq2DictionaryMinimod.nuspec">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="NestedDictionary\NestedDictionaryMinimod.nuspec">
       <SubType>Designer</SubType>
     </None>

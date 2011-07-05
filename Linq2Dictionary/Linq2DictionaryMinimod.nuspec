@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+  <metadata>
+    <id>Minimod.Linq2Dictionary</id>
+    <version>0.9.0</version>
+    <authors>Lars Corneliussen</authors>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <licenseUrl>http://www.apache.org/licenses/LICENSE-2.0</licenseUrl>
+    <tags>minimod</tags>
+    <summary>Extends the Dictionary with some linquish Methods</summary>
+    <description xml:space="preserve">Extends System.Collections.Generic.IDictionary´2 with Union.</description>
+  </metadata>
+  <files>
+    <file src="Linq2DictionaryMinimod.cs" target="content\Minimods\Minimod.Linq2Dictionary.Generated.cs" />
+  </files>
+</package>
