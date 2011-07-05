@@ -2,18 +2,19 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
   <metadata>
     <id>Minimod.NestedDictionary</id>
-    <version>0.9.0</version>
+    <version>0.9.1</version>
     <authors>Lars Corneliussen</authors>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <licenseUrl>http://www.apache.org/licenses/LICENSE-2.0</licenseUrl>
     <tags>minimod</tags>
     <summary>A minimod with dictionary extensions, helping whereever you nest lists or dictionaries.</summary>
-    <description xml:space="preserve">Extends System.Collections.Generic.IDictionary´1 by following methods: 
+    <description xml:space="preserve">Extends System.Collections.Generic.IDictionary´2 with EnsureValueFor and AddToCollection: 
     
       a) EnsureValueFor(TKey key): Creates a instance of TValue for the given key and returns it; 
       
       b) AddToCollection(TKey key, item(s)): Ensures the concrete collection type for key, and adds the given value(s) to it.
     </description>
+    <owners>Copyright © Lars Corneliussen 2011</owners>
   </metadata>
   <files>
     <file src="NestedDictionaryMinimod.cs" target="content\Minimods\Minimod.NestedDictionary.Generated.cs" />
