@@ -5,13 +5,21 @@ using System.Reactive.Subjects;
 
 namespace Minimod.RxMessageBus
 {
-    public class RxMessageBus
+    /// <summary>
+    /// Minimod.RxMessageBus, Version 0.0.1
+    /// <para>A minimod event-/message bus.</para>
+    /// </summary>
+    /// <remarks>
+    /// Licensed under the Apache License, Version 2.0; you may not use this file except in compliance with the License.
+    /// http://www.apache.org/licenses/LICENSE-2.0
+    /// </remarks>
+    public class RxMessageBusMinimod
     {
-        private static RxMessageBus _defaultInstance;
+        private static RxMessageBusMinimod _defaultInstance;
         private readonly Subject<object> _subject = new Subject<object>();
 
-        public static RxMessageBus Default { get { return _defaultInstance ?? (_defaultInstance = new RxMessageBus()); } }
-        public static void OverrideDefault(RxMessageBus newMessenger) { _defaultInstance = newMessenger; }
+        public static RxMessageBusMinimod Default { get { return _defaultInstance ?? (_defaultInstance = new RxMessageBusMinimod()); } }
+        public static void OverrideDefault(RxMessageBusMinimod newMessenger) { _defaultInstance = newMessenger; }
         public static void Reset() { _defaultInstance = null; }
 
         public IDisposable Register<T>(Action<T> action)
