@@ -11,6 +11,6 @@
     <description xml:space="preserve">Extends System.Collections.Generic.IEnumerable´2 with some methods.</description>
   </metadata>
   <files>
-    <file src="LinqExtentionsMinimod.cs" target="content\Minimods\Minimod.LinqExtentionsMinimod.Generated.cs" />
+    <file src="LinqExtentionsMinimod.cs" target="content\Minimods\Minimod.LinqExtentions.Generated.cs" />
   </files>
 </package>

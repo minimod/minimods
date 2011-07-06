@@ -11,6 +11,6 @@
     <description xml:space="preserve">A easy implementation of Event-/Messagebus for CEP by using the Rx Framework.</description>
   </metadata>
   <files>
-    <file src="RxMessageBus.cs" target="content\Minimods\RxMessageBus.Generated.cs" />
+    <file src="RxMessageBusMinimod.cs" target="content\Minimods\Minimod.RxMessageBus.Generated.cs" />
   </files>
 </package>

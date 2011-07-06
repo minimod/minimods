@@ -60,7 +60,7 @@
   <ItemGroup>
     <Compile Include="Linq2Dictionary\Linq2DictionaryMinimod.cs" />
     <Compile Include="Linq2Dictionary\Linq2DictionaryTests.cs" />
-    <Compile Include="LinqExtentions\LinqExtentions.cs" />
+    <Compile Include="LinqExtentions\LinqExtentionsMinimod.cs" />
     <Compile Include="NestedDictionary\NestedDictionaryMinimod.cs" />
     <Compile Include="PrettyTypeSignatures\ClassA.cs" />
     <Compile Include="PrettyTypeSignatures\ClassX.cs" />
@@ -68,12 +68,13 @@
     <Compile Include="PrettyText\PrettyTextMinimod.cs" />
     <Compile Include="PrettyTypeSignatures\PrettyTypeSignaturesMinimod.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="RxMessageBus\RxMessageBus.cs" />
+    <Compile Include="RxMessageBus\RxMessageBusMinimod.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Linq2Dictionary\Linq2DictionaryMinimod.nuspec">
       <SubType>Designer</SubType>
     </None>
+    <None Include="LinqExtentions\LinqExtentionsMinimod.nuspec" />
     <None Include="NestedDictionary\NestedDictionaryMinimod.nuspec">
       <SubType>Designer</SubType>
     </None>
@@ -84,6 +85,7 @@
     <None Include="PrettyTypeSignatures\PrettyTypeSignaturesMinimod.nuspec">
       <SubType>Designer</SubType>
     </None>
+    <None Include="RxMessageBus\RxMessageBusMinimod.nuspec" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
