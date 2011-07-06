@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+  <metadata>
+    <id>Minimod.RxMessageBus</id>
+    <version>0.0.1</version>
+    <authors>Mike Bild</authors>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <licenseUrl>http://www.apache.org/licenses/LICENSE-2.0</licenseUrl>
+    <tags>minimod</tags>
+    <summary>Small and easy Reactive Framework based MessageBus</summary>
+    <description xml:space="preserve">A easy implementation of Event-/Messagebus for CEP by using the Rx Framework.</description>
+  </metadata>
+  <files>
+    <file src="RxMessageBus.cs" target="content\Minimods\RxMessageBus.Generated.cs" />
+  </files>
+</package>
