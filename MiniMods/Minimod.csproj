@@ -60,6 +60,7 @@
   <ItemGroup>
     <Compile Include="Linq2Dictionary\Linq2DictionaryMinimod.cs" />
     <Compile Include="Linq2Dictionary\Linq2DictionaryTests.cs" />
+    <Compile Include="LinqExtentions\LinqExtentions.cs" />
     <Compile Include="NestedDictionary\NestedDictionaryMinimod.cs" />
     <Compile Include="PrettyTypeSignatures\ClassA.cs" />
     <Compile Include="PrettyTypeSignatures\ClassX.cs" />
