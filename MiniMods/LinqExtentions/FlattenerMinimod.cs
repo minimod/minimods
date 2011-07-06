@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Minimod.LinqExtentions
 {
-    public static class LinqExtensions
+    public static class FlattenerMinimod
     {
         public static IEnumerable<T> Flatten<T>(this IEnumerable<T> source, Func<T, IEnumerable<T>> flattenBy)
         {
