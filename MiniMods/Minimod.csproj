@@ -60,7 +60,7 @@
   <ItemGroup>
     <Compile Include="Linq2Dictionary\Linq2DictionaryMinimod.cs" />
     <Compile Include="Linq2Dictionary\Linq2DictionaryTests.cs" />
-    <Compile Include="LinqExtentions\FlattenerMinimod.cs" />
+    <Compile Include="Flattener\FlattenerMinimod.cs" />
     <Compile Include="NestedDictionary\NestedDictionaryMinimod.cs" />
     <Compile Include="PrettyTypeSignatures\ClassA.cs" />
     <Compile Include="PrettyTypeSignatures\ClassX.cs" />
@@ -74,7 +74,7 @@
     <None Include="Linq2Dictionary\Linq2DictionaryMinimod.nuspec">
       <SubType>Designer</SubType>
     </None>
-    <None Include="LinqExtentions\FlattenerMinimod.nuspec" />
+    <None Include="Flattener\FlattenerMinimod.nuspec" />
     <None Include="NestedDictionary\NestedDictionaryMinimod.nuspec">
       <SubType>Designer</SubType>
     </None>
