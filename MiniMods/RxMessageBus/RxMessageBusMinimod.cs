@@ -31,10 +31,7 @@ namespace Minimod.RxMessageBus
 
         public IDisposable Register<T>(Action<T> action, Func<T, bool> predicate)
         {
-            return _subject
-                .OfType<T>()
-                .Where(predicate)
-                .Subscribe(action);
+            return Register(action, predicate, Scheduler.CurrentThread);
         }
 
         public IDisposable Register<T>(Action<T> action, Func<T, bool> predicate, IScheduler scheduler)
@@ -56,7 +53,7 @@ namespace Minimod.RxMessageBus
 
         public IDisposable Register<T1, T2>(Action<Tuple<T1, T2>> action)
         {
-            return Register<T1, T2, Tuple<T1, T2>>(action, (x, y) => new Tuple<T1, T2>(x, y));
+            return Register(action, Scheduler.CurrentThread);
         }
 
         public IDisposable Register<T1, T2>(Action<Tuple<T1, T2>> action, IScheduler scheduler)
@@ -64,17 +61,9 @@ namespace Minimod.RxMessageBus
             return Register<T1, T2, Tuple<T1, T2>>(action, (x, y) => new Tuple<T1, T2>(x, y), scheduler);
         }
 
-
         public IDisposable Register<T1, T2, TResult>(Action<TResult> action, Func<T1, T2, TResult> selector)
         {
-            var left = _subject.OfType<T1>();
-            var right = _subject.OfType<T2>();
-            var match = left
-                .And(right)
-                .Then(selector);
-            return Observable
-                .When(match)
-                .Subscribe(action);
+            return Register(action, selector, Scheduler.CurrentThread);
         }
 
         public IDisposable Register<T1, T2, TResult>(Action<TResult> action, Func<T1, T2, TResult> selector, IScheduler scheduler)
