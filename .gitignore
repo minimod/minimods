@@ -29,3 +29,5 @@ packages/
 _ReSharper*/
 [Tt]est[Rr]esult*
 *.crunchsolution.local.xml
+*.nupkg
+target
