@@ -1,4 +1,4 @@
-﻿namespace Minimod.PrettyText
+﻿namespace Minimod.PrettyTypeSignatures
 {
     public class ClassA
     {
