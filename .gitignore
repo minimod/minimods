@@ -31,3 +31,5 @@ _ReSharper*/
 *.crunchsolution.local.xml
 *.nupkg
 target
+#Include files
+!NuGet.exe
