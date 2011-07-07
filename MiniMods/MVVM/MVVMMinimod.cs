@@ -28,7 +28,6 @@ namespace Minimod.MVVM
             _value = defaultValue;
         }
 
-
         private T _value;
         public T Value
         {
@@ -37,8 +36,10 @@ namespace Minimod.MVVM
             {
                 if (EqualityComparer<T>.Default.Equals(_value, value) == false)
                 {
+                    var oldValue = _value;
                     _value = value;
                     PropertyChanged(this, new PropertyChangedEventArgs("Value"));
+                    RxMessageBusMinimod.Default.Send(new PropertyChangedMessage<T>(_value, oldValue));
                 }
             }
         }
@@ -104,6 +105,18 @@ namespace Minimod.MVVM
     public interface ICallbackMessage<T> : IMessage<T>
     {
         Action<T> Callback { get; set; }
+    }
+
+    public class PropertyChangedMessage<T> : IMessage<T>
+    {
+        public T Value { get; set; }
+        public T OldValue { get; set; }
+
+        public PropertyChangedMessage(T value, T oldValue)
+        {
+            Value = value;
+            OldValue = oldValue;
+        }
     }
 
     public interface ICommandHandler<in T>
