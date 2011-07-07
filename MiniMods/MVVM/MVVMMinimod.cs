@@ -14,7 +14,7 @@ namespace Minimod.MVVM
     /// Licensed under the Apache License, Version 2.0; you may not use this file except in compliance with the License.
     /// http://www.apache.org/licenses/LICENSE-2.0
     /// </remarks>
-    public class ViewModelField<T> : INotifyPropertyChanged
+    public class ViewModelField<T> : INotifyPropertyChanged, IEventHandler<IMessage<T>>
     {
         public ViewModelField()
         {
@@ -53,6 +53,10 @@ namespace Minimod.MVVM
         private bool _isEnabled;
         public bool IsEnabled { get { return _isEnabled; } set { _isEnabled = value; PropertyChanged(this, new PropertyChangedEventArgs("IsEnabled")); } }
         public event PropertyChangedEventHandler PropertyChanged = delegate { };
+        public void Handle(IMessage<T> commandMessage)
+        {
+            Value = commandMessage.Value;
+        }
 
         public override string ToString()
         {
