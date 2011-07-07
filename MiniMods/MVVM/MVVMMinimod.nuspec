@@ -12,4 +12,10 @@
   <files>
     <file src="MVVMMinimod.cs" target="content\Minimods\Minimod.MVVM.Generated.cs" />
   </files>
+  <dependencies>
+    <dependency id="Minimod.RxMessageBus" version="0.0.1" />    
+  </dependencies>
+  <frameworkAssemblies>
+    <frameworkAssembly assemblyName="PresentationCore" />    
+  </frameworkAssemblies>
 </package>
