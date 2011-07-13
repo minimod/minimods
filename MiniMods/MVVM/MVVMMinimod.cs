@@ -2,19 +2,19 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows.Input;
-using Minimod.RxMessageBus;
+using Minimod.RxMessageBroker;
 
 namespace Minimod.MVVM
 {
     /// <summary>
     /// Minimod.MVVM, Version 0.0.1
-    /// <para>A minimod for small message based MVVM.</para>
+    /// <para>A small reactive message based MVVM.</para>
     /// </summary>
     /// <remarks>
     /// Licensed under the Apache License, Version 2.0; you may not use this file except in compliance with the License.
     /// http://www.apache.org/licenses/LICENSE-2.0
     /// </remarks>
-    public class ViewModelField<T> : INotifyPropertyChanged, IEventHandler<IMessage<T>>
+    public class ViewModelField<T> : INotifyPropertyChanged, IEventHandler<IUiMessage<T>>
     {
         public ViewModelField()
         {
@@ -39,7 +39,7 @@ namespace Minimod.MVVM
                     var oldValue = _value;
                     _value = value;
                     PropertyChanged(this, new PropertyChangedEventArgs("Value"));
-                    RxMessageBusMinimod.Default.Send(new PropertyChangedMessage<T>(_value, oldValue));
+                    RxMessageBrokerMinimod.Default.Send(new PropertyChangedUiMessage<T>(_value, oldValue));
                 }
             }
         }
@@ -53,9 +53,9 @@ namespace Minimod.MVVM
         private bool _isEnabled;
         public bool IsEnabled { get { return _isEnabled; } set { _isEnabled = value; PropertyChanged(this, new PropertyChangedEventArgs("IsEnabled")); } }
         public event PropertyChangedEventHandler PropertyChanged = delegate { };
-        public void Handle(IMessage<T> commandMessage)
+        public void Handle(IUiMessage<T> commandUiMessage)
         {
-            Value = commandMessage.Value;
+            Value = commandUiMessage.Value;
         }
 
         public override string ToString()
@@ -66,7 +66,7 @@ namespace Minimod.MVVM
 
     public class UiMessageCommand<T> : ICommand, INotifyPropertyChanged
     {
-        public IMessage<T> Message { get; private set; }
+        public IUiMessage<T> UiMessage { get; private set; }
         private bool _isVisible;
         public bool IsVisible { get { return _isVisible; } set { _isVisible = value; PropertyChanged(this, new PropertyChangedEventArgs("IsVisible")); } }
         private bool _isEnabled;
@@ -81,15 +81,16 @@ namespace Minimod.MVVM
             }
         }
 
-        public UiMessageCommand(IMessage<T> message)
+        public UiMessageCommand(IUiMessage<T> uiMessage)
         {
-            Message = message;
+            UiMessage = uiMessage;
         }
 
         public void Execute(object parameter)
         {
-            Message.Value = (T)parameter;
-            RxMessageBusMinimod.Default.Send(Message);
+            if (parameter != null)
+                UiMessage.Value = (T)parameter;
+            RxMessageBrokerMinimod.Default.Send(UiMessage);
         }
 
         public bool CanExecute(object parameter)
@@ -101,22 +102,23 @@ namespace Minimod.MVVM
         public event PropertyChangedEventHandler PropertyChanged = delegate { };
     }
 
-    public interface IMessage<T>
+    public interface IUiMessage<T>
     {
         T Value { get; set; }
     }
 
-    public interface ICallbackMessage<T> : IMessage<T>
+    public interface IUiCallbackMessage<T> : IUiMessage<T>
     {
         Action<T> Callback { get; set; }
+        Func<T, bool> ConfirmationCallback { get; set; }
     }
 
-    public class PropertyChangedMessage<T> : IMessage<T>
+    public class PropertyChangedUiMessage<T> : IUiMessage<T>
     {
         public T Value { get; set; }
         public T OldValue { get; set; }
 
-        public PropertyChangedMessage(T value, T oldValue)
+        public PropertyChangedUiMessage(T value, T oldValue)
         {
             Value = value;
             OldValue = oldValue;
@@ -125,11 +127,11 @@ namespace Minimod.MVVM
 
     public interface ICommandHandler<in T>
     {
-        void Execute(T commandMessage);
+        void Execute(T ClearChatMessagesUiCommand);
     }
 
     public interface IEventHandler<in T>
     {
-        void Handle(T commandMessage);
+        void Handle(T eventMessage);
     }
 }

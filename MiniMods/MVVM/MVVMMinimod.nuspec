@@ -7,13 +7,13 @@
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <licenseUrl>http://www.apache.org/licenses/LICENSE-2.0</licenseUrl>
     <tags>minimod</tags>
-    <description xml:space="preserve">A small message based MVVM.</description>
+    <description xml:space="preserve">A small reactive message based MVVM.</description>
   </metadata>
   <files>
     <file src="MVVMMinimod.cs" target="content\Minimods\Minimod.MVVM.Generated.cs" />
   </files>
   <dependencies>
-    <dependency id="Minimod.RxMessageBus" version="0.0.1" />    
+    <dependency id="Minimod.RxMessageBroker" version="0.0.1" />    
   </dependencies>
   <frameworkAssemblies>
     <frameworkAssembly assemblyName="PresentationCore" />    

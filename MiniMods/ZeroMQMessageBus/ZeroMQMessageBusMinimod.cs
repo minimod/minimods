@@ -9,27 +9,32 @@ using System.Threading;
 using Newtonsoft.Json;
 using ZMQ;
 
-namespace Minimod.ZeroMQAdapter
+namespace Minimod.ZeroMQMessageBus
 {
     /// <summary>
-    /// Minimod.ZeroMQAdapter, Version 0.0.1
-    /// <para>A minimod for handling messaging with ZeroMQ, Json and Rx Framework.</para>
+    /// Minimod.ZeroMQMessageBus, Version 0.0.1
+    /// <para>A minimod for messaging using ZeroMQ, Json and Rx.</para>
     /// </summary>
     /// <remarks>
     /// Licensed under the Apache License, Version 2.0; you may not use this file except in compliance with the License.
     /// http://www.apache.org/licenses/LICENSE-2.0
     /// </remarks>
-    public class ZeroMQAdapterMinimod : IDisposable
+    public class ZeroMQMessageBusMinimod : IDisposable
     {
         private readonly Context _subContext;
         private readonly Context _pubContext;
         private readonly Socket _subSocket;
         private readonly Socket _pubSocket;
         private readonly Subject<object> _subject;
-        private readonly IDisposable _subscription;
+        private IDisposable _subscription;
         private readonly Guid _correlationId;
 
-        public ZeroMQAdapterMinimod(string subsciptionAddress, string publishAddress)
+        private static ZeroMQMessageBusMinimod _defaultInstance;
+        public static ZeroMQMessageBusMinimod Default { get { return _defaultInstance ?? (_defaultInstance = new ZeroMQMessageBusMinimod()); } }
+        public static void OverrideDefault(ZeroMQMessageBusMinimod newMessenger) { _defaultInstance = newMessenger; }
+        public static void Reset() { _defaultInstance = null; }
+
+        public ZeroMQMessageBusMinimod()
         {
             _correlationId = Guid.NewGuid();
             _subContext = new Context(1);
@@ -37,7 +42,10 @@ namespace Minimod.ZeroMQAdapter
             _subject = new Subject<object>();
             _subSocket = _subContext.Socket(SocketType.SUB);
             _pubSocket = _pubContext.Socket(SocketType.PUB);
+        }
 
+        public void Connect(string subsciptionAddress, string publishAddress)
+        {
             _subSocket.Connect(subsciptionAddress);
             _pubSocket.Connect(publishAddress);
 
@@ -46,6 +54,7 @@ namespace Minimod.ZeroMQAdapter
             _subscription = Observable
                 .Interval(TimeSpan.FromMilliseconds(500))
                 .Subscribe(_ => _subject.OnNext(_subSocket.Recv(Encoding.UTF8)));
+
         }
 
         public IDisposable Register<T>(Action<T> action)

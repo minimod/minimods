@@ -1,15 +1,15 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
   <metadata>
-    <id>Minimod.RxMessageBus</id>
+    <id>Minimod.RxMessageBroker</id>
     <version>0.0.1</version>
     <authors>Mike Bild</authors>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <licenseUrl>http://www.apache.org/licenses/LICENSE-2.0</licenseUrl>
     <tags>minimod</tags>    
-    <description xml:space="preserve">A easy implementation of Event-/Messagebus for CEP by using the Rx Framework.</description>
+    <description xml:space="preserve">An Event-/Message broker by using the Rx.</description>
   </metadata>
   <files>
-    <file src="RxMessageBusMinimod.cs" target="content\Minimods\Minimod.RxMessageBus.Generated.cs" />
+    <file src="RxMessageBrokerMinimod.cs" target="content\Minimods\Minimod.RxMessageBroker.Generated.cs" />
   </files>
 </package>
