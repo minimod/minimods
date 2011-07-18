@@ -12,4 +12,7 @@
   <files>
     <file src="RxEventSourcingMinimod.cs" target="content\Minimods\Minimod.RxEventSourcing.Generated.cs" />
   </files>
+  <dependencies>
+    <dependency id="Minimod.RxMessageBroker" version="0.0.1" />
+  </dependencies>
 </package>

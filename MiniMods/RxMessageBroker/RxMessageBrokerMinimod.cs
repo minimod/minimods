@@ -16,22 +16,24 @@ namespace Minimod.RxMessageBroker
     public class RxMessageBrokerMinimod
     {
         private static RxMessageBrokerMinimod _defaultInstance;
-        private readonly Subject<object> _subject = new Subject<object>();       
+        private readonly Subject<object> _stream = new Subject<object>();       
 
         public static RxMessageBrokerMinimod Default { get { return _defaultInstance ?? (_defaultInstance = new RxMessageBrokerMinimod()); } }
         public static void OverrideDefault(RxMessageBrokerMinimod newMessenger) { _defaultInstance = newMessenger; }
         public static void Reset() { _defaultInstance = null; }
-       
+
+        public IObservable<object> Stream { get { return _stream; } }
+
         public IDisposable Register<T>(Action<T> action)
         {
-            return _subject
+            return _stream
                  .OfType<T>()
                  .Subscribe(action);
         }
 
         public IDisposable Register<T>(Action<T> action, IScheduler scheduler)
         {
-            return _subject
+            return _stream
                  .OfType<T>()
                  .ObserveOn(scheduler)
                  .Subscribe(action);
@@ -44,7 +46,7 @@ namespace Minimod.RxMessageBroker
 
         public IDisposable Register<T>(Action<T> action, Func<T, bool> predicate, IScheduler scheduler)
         {
-            return _subject
+            return _stream
                 .OfType<T>()
                 .ObserveOn(scheduler)
                 .Where(predicate)
@@ -56,7 +58,7 @@ namespace Minimod.RxMessageBroker
         {
             Observable.FromEvent<T>(a => fromEvent += a, a => fromEvent -= a)
                 .Select(x => (object)x)
-                .Merge(_subject);
+                .Merge(_stream);
         }
 
         public IDisposable Register<T1, T2>(Action<Tuple<T1, T2>> action)
@@ -76,8 +78,8 @@ namespace Minimod.RxMessageBroker
 
         public IDisposable Register<T1, T2, TResult>(Action<TResult> action, Func<T1, T2, TResult> selector, IScheduler scheduler)
         {
-            var left = _subject.OfType<T1>();
-            var right = _subject.OfType<T2>();
+            var left = _stream.OfType<T1>();
+            var right = _stream.OfType<T2>();
             var match = left
                 .And(right)
                 .Then(selector);
@@ -89,7 +91,7 @@ namespace Minimod.RxMessageBroker
 
         public void Send<T>(T message)
         {
-            _subject
+            _stream
                 .OnNext(message);
         }
     }

@@ -76,7 +76,8 @@
     <Compile Include="PrettyTypeSignatures\PrettyTypeSignaturesMinimod.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="MVVM\MVVMMinimod.cs" />
-    <Compile Include="RxEventSourcing\RxEventSourcing.cs" />
+    <Compile Include="RxEventSourcing\RxEventSourcingMinimod.cs" />
+    <Compile Include="RxEventSourcing\RxEventSourcingMinimodSamples.cs" />
     <Compile Include="RxMessageBroker\RxMessageBrokerMinimod.cs" />
     <Compile Include="ZeroMQMessageBus\ZeroMQMessageBusMinimod.cs" />
   </ItemGroup>
@@ -96,6 +97,7 @@
       <SubType>Designer</SubType>
     </None>
     <None Include="MVVM\MVVMMinimod.nuspec" />
+    <None Include="RxEventSourcing\RxEventSourcingMinimod.nuspec" />
     <None Include="RxMessageBroker\RxMessageBrokerMinimod.nuspec" />
     <None Include="ZeroMQMessageBus\ZeroMQMessageBusMinimod.nuspec" />
   </ItemGroup>

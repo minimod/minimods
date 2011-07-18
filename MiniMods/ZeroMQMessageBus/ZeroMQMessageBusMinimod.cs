@@ -25,7 +25,7 @@ namespace Minimod.ZeroMQMessageBus
         private readonly Context _pubContext;
         private readonly Socket _subSocket;
         private readonly Socket _pubSocket;
-        private readonly Subject<object> _subject;
+        private readonly Subject<object> _stream;
         private IDisposable _subscription;
         private readonly Guid _correlationId;
 
@@ -33,13 +33,14 @@ namespace Minimod.ZeroMQMessageBus
         public static ZeroMQMessageBusMinimod Default { get { return _defaultInstance ?? (_defaultInstance = new ZeroMQMessageBusMinimod()); } }
         public static void OverrideDefault(ZeroMQMessageBusMinimod newMessenger) { _defaultInstance = newMessenger; }
         public static void Reset() { _defaultInstance = null; }
+        public IObservable<object> Stream { get { return _stream; } }
 
         public ZeroMQMessageBusMinimod()
         {
             _correlationId = Guid.NewGuid();
             _subContext = new Context(1);
             _pubContext = new Context(1);
-            _subject = new Subject<object>();
+            _stream = new Subject<object>();
             _subSocket = _subContext.Socket(SocketType.SUB);
             _pubSocket = _pubContext.Socket(SocketType.PUB);
         }
@@ -53,7 +54,7 @@ namespace Minimod.ZeroMQMessageBus
 
             _subscription = Observable
                 .Interval(TimeSpan.FromMilliseconds(500))
-                .Subscribe(_ => _subject.OnNext(_subSocket.Recv(Encoding.UTF8)));
+                .Subscribe(_ => _stream.OnNext(_subSocket.Recv(Encoding.UTF8)));
 
         }
 
@@ -64,7 +65,7 @@ namespace Minimod.ZeroMQMessageBus
 
         public IDisposable Register<T>(Action<T> action, IScheduler scheduler)
         {
-            return _subject
+            return _stream
                 .Where(message => !message.ToString().Contains(_correlationId.ToString()))
                 .Select<object, dynamic>(jsonMessage => JsonConvert.DeserializeObject<ExpandoObject>(jsonMessage.ToString(), new Newtonsoft.Json.Converters.ExpandoObjectConverter()))                
                 .Select(message =>
@@ -95,7 +96,7 @@ namespace Minimod.ZeroMQMessageBus
 
         public void Dispose()
         {
-            _subject.OnCompleted();
+            _stream.OnCompleted();
             _subscription.Dispose();
             _pubSocket.Dispose();
             _subSocket.Dispose();
