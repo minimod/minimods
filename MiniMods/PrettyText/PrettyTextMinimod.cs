@@ -6,7 +6,7 @@ using System.Text.RegularExpressions;
 namespace Minimod.PrettyText
 {
     /// <summary>
-    /// Minimod.PrettyText, Version 0.9.6
+    /// <h1>Minimod.PrettyText, Version 0.9.7, Copyright © Lars Corneliussen 2011</h1>
     /// <para>A minimod with string extensions, helping whereever you have to shape text to fit into a box.</para>
     /// </summary>
     /// <remarks>
@@ -20,7 +20,15 @@ namespace Minimod.PrettyText
         /// </summary>
         public static string ShortenTo(this string text, int length)
         {
-            return text.Length > length ? text.Substring(0, length - 3) + "..." : text;
+            return ShortenTo(text, length, "...");
+        }
+
+        /// <summary>
+        /// Fits the text into <paramref name="length"/>, appending <paramref name="hint"/> if it is too long.
+        /// </summary>
+        public static string ShortenTo(this string text, int length, string hint)
+        {
+            return text.Length > length ? text.Substring(0, length - hint.Length) + hint : text;
         }
 
         /// <summary>
