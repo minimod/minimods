@@ -3,7 +3,7 @@
 namespace Minimod.NestedDictionary
 {
     /// <summary>
-    /// <h1>Minimod.NestedDictionary, Version 0.9.0</h1>
+    /// <h1>Minimod.NestedDictionary, Version 0.9.0, Copyright © Lars Corneliussen 2011</h1>
     /// <para>Sometimes you wan't to collect or cache some data in lists by key, or even nested dictionaries. </para>
     /// <para>Then, for each new key, you have to instanciate the list or nested dictionary, before you can put it in.</para>
     /// </summary>
