@@ -79,6 +79,10 @@
     <Compile Include="RxEventSourcing\RxEventSourcingMinimod.cs" />
     <Compile Include="RxEventSourcing\RxEventSourcingMinimodSamples.cs" />
     <Compile Include="RxMessageBroker\RxMessageBrokerMinimod.cs" />
+    <Compile Include="ThreadVariable\RealWorldExample.cs" />
+    <Compile Include="ThreadVariable\TestHelper.cs" />
+    <Compile Include="ThreadVariable\ThreadVariable.cs" />
+    <Compile Include="ThreadVariable\ThreadVariableTest.cs" />
     <Compile Include="ZeroMQMessageBus\ZeroMQMessageBusMinimod.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -99,6 +103,8 @@
     <None Include="MVVM\MVVMMinimod.nuspec" />
     <None Include="RxEventSourcing\RxEventSourcingMinimod.nuspec" />
     <None Include="RxMessageBroker\RxMessageBrokerMinimod.nuspec" />
+    <None Include="ThreadVariable\Minimod.ThreadVariable.0.9.nupkg" />
+    <None Include="ThreadVariable\ThreadVariableMinimod.nuspec" />
     <None Include="ZeroMQMessageBus\ZeroMQMessageBusMinimod.nuspec" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
