@@ -65,6 +65,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="JoinStrings\JoinStringsMinimod.cs" />
+    <Compile Include="JoinStrings\JoinStringsMinimodTests.cs" />
     <Compile Include="Linq2Dictionary\Linq2DictionaryMinimod.cs" />
     <Compile Include="Linq2Dictionary\Linq2DictionaryTests.cs" />
     <Compile Include="Flattener\FlattenerMinimod.cs" />
@@ -86,6 +88,9 @@
     <Compile Include="ZeroMQMessageBus\ZeroMQMessageBusMinimod.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="JoinStrings\JoinStringsMinimod.nuspec">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="Linq2Dictionary\Linq2DictionaryMinimod.nuspec">
       <SubType>Designer</SubType>
     </None>
@@ -93,7 +98,9 @@
     <None Include="NestedDictionary\NestedDictionaryMinimod.nuspec">
       <SubType>Designer</SubType>
     </None>
-    <None Include="packages.config" />
+    <None Include="packages.config">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="PrettyText\PrettyTextMinimod.nuspec">
       <SubType>Designer</SubType>
     </None>
