@@ -6,7 +6,7 @@ using System.Text.RegularExpressions;
 namespace Minimod.PrettyText
 {
     /// <summary>
-    /// <h1>Minimod.PrettyText, Version 0.9.7, Copyright © Lars Corneliussen 2011</h1>
+    /// <h1>Minimod.PrettyText, Version 0.9.8, Copyright © Lars Corneliussen 2011</h1>
     /// <para>A minimod with string extensions, helping whereever you have to shape text to fit into a box.</para>
     /// </summary>
     /// <remarks>
@@ -28,6 +28,9 @@ namespace Minimod.PrettyText
         /// </summary>
         public static string ShortenTo(this string text, int length, string hint)
         {
+            if (text == null)
+                return null;
+
             return text.Length > length ? text.Substring(0, length - hint.Length) + hint : text;
         }
 
@@ -36,6 +39,9 @@ namespace Minimod.PrettyText
         /// </summary>
         public static IEnumerable<string> SplitLines(this string input)
         {
+            if (input == null)
+                return new string[0];
+
             return input.Split(new[] { Environment.NewLine }, StringSplitOptions.None);
         }
 
@@ -44,6 +50,8 @@ namespace Minimod.PrettyText
         /// </summary>
         public static string JoinLines(this IEnumerable<string> lines)
         {
+            if (lines == null) throw new ArgumentNullException("lines");
+
             return string.Join(Environment.NewLine, lines.ToArray());
         }
 
@@ -122,6 +130,8 @@ namespace Minimod.PrettyText
         /// </summary>
         public static IEnumerable<string> IndentBy(this IEnumerable<string> lines, int leadingSpaces)
         {
+            if (lines == null) throw new ArgumentNullException("lines");
+
             return lines.Select(_ => new string(' ', leadingSpaces) + _);
         }
     }
