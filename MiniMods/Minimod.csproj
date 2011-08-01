@@ -65,6 +65,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="FluentGenerics\FluentGenericsMinimod.cs" />
+    <Compile Include="FluentGenerics\FluentGenericsMinimodTests.cs" />
     <Compile Include="JoinStrings\JoinStringsMinimod.cs" />
     <Compile Include="JoinStrings\JoinStringsMinimodTests.cs" />
     <Compile Include="Linq2Dictionary\Linq2DictionaryMinimod.cs" />
@@ -88,6 +90,9 @@
     <Compile Include="ZeroMQMessageBus\ZeroMQMessageBusMinimod.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="FluentGenerics\FluentGenericsMinimod.nuspec">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="JoinStrings\JoinStringsMinimod.nuspec">
       <SubType>Designer</SubType>
     </None>
