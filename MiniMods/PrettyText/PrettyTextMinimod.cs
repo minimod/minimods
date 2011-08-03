@@ -6,7 +6,7 @@ using System.Text.RegularExpressions;
 namespace Minimod.PrettyText
 {
     /// <summary>
-    /// <h1>Minimod.PrettyText, Version 0.9.8, Copyright © Lars Corneliussen 2011</h1>
+    /// <h1>Minimod.PrettyText, Version 0.9.9, Copyright © Lars Corneliussen 2011</h1>
     /// <para>A minimod with string extensions, helping whereever you have to shape text to fit into a box.</para>
     /// </summary>
     /// <remarks>
@@ -130,9 +130,62 @@ namespace Minimod.PrettyText
         /// </summary>
         public static IEnumerable<string> IndentBy(this IEnumerable<string> lines, int leadingSpaces)
         {
+            return IndentBy(lines, leadingSpaces, IndentOptions.None);
+        }
+
+        /// <summary>
+        /// Indents each line by specified number of spaces.
+        /// </summary>
+        public static IEnumerable<string> IndentBy(this IEnumerable<string> lines, int leadingSpaces, IndentOptions options)
+        {
             if (lines == null) throw new ArgumentNullException("lines");
 
-            return lines.Select(_ => new string(' ', leadingSpaces) + _);
+            bool firstLine = true;
+            foreach (var line in lines)
+            {
+                if (firstLine && options.HasAnyFlag(options))
+                {
+                    yield return line;
+                }
+
+                yield return new string(' ', leadingSpaces) + line;
+            }
+        }
+
+        /// <summary>
+        /// Indents each line by specified number of spaces.
+        /// </summary>
+        public static string IndentLinesBy(this string lines, int leadingSpaces)
+        {
+            return IndentLinesBy(lines, leadingSpaces, IndentOptions.None);
+        }
+
+        /// <summary>
+        /// Indents each line by specified number of spaces.
+        /// </summary>
+        public static string IndentLinesBy(this string lines, int leadingSpaces, IndentOptions options)
+        {
+            if (lines == null) throw new ArgumentNullException("lines");
+
+            return lines.SplitLines().IndentBy(leadingSpaces, options).JoinLines();
+        }
+
+        [Flags]
+        public enum IndentOptions
+        {
+            None,
+            SkipFirst
+        }
+
+        /// <remarks>
+        /// copied from http://www.mmowned.com/forums/world-of-warcraft/bots-programs/memory-editing/297201-net-4-0-enum-hasflag-not-what-you-might-expect.html
+        /// </remarks>>
+        private static bool HasAnyFlag(this Enum value, Enum flags)
+        {
+            var val = ((IConvertible)value).ToUInt64(null);
+            var test = ((IConvertible)flags).ToUInt64(null);
+
+            return (val & test) != 0;
         }
     }
 }
