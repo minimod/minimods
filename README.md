@@ -4,6 +4,9 @@
 
 > and, at this github site, a collection of some Minimods from the authors.
 
+### Current Minimods
+Find all currently published Minimods on Nuget Gallery: http://bit.ly/nuget-minimods
+
 ### Our Intention
 
 We love being productive. And there are tons of generic problems that we solve far too often; well, or we copy-paste them. Sometimes we package them into *.Common or *.Utils, and put them in our toolbox. But theese are a nightmare; read: [1][1] [2][2]
