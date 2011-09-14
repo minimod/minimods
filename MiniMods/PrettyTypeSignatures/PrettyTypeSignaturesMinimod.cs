@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Text;
 
 namespace Minimod.PrettyTypeSignatures
@@ -91,21 +92,42 @@ namespace Minimod.PrettyTypeSignatures
                                                      .Skip(declaringGenArgsCount)
                                                      .ToArray();
 
-            if (trailingGenericArguments.Length == 0)
+            var simpleTypeName = type.Name;
+            if (CheckIfAnonymousType(type))
             {
-                sb.Append(type.Name);
-                return sb.ToString();
+                simpleTypeName = "Anonymous";
+            }
+            else if (trailingGenericArguments.Length > 0)
+            {
+                simpleTypeName = type.Name.Substring(0, type.Name.IndexOf('`'));
             }
 
-            IEnumerable<string> displayNames = trailingGenericArguments.Select(t => t.GetPrettyName());
+            sb.Append(simpleTypeName);
 
-            sb.Append(type.Name.Substring(0, type.Name.IndexOf('`')));
-            sb.Append("<");
-            sb.Append(string.Join(",", displayNames.ToArray()));
-            sb.Append(">");
+            if (trailingGenericArguments.Length > 0)
+            {
+                IEnumerable<string> displayNames = trailingGenericArguments.Select(t => t.GetPrettyName());
+
+                sb.Append("<");
+                sb.Append(string.Join(",", displayNames.ToArray()));
+                sb.Append(">");
+            }
 
             return sb.ToString();
         }
+
+        private static bool CheckIfAnonymousType(Type type)
+        {
+            if (type == null)
+                throw new ArgumentNullException("type");
+
+            // HACK: The only way to detect anonymous types right now.
+            return Attribute.IsDefined(type, typeof(CompilerGeneratedAttribute), false)
+                   && type.Name.Contains("AnonymousType")
+                   && (type.Name.StartsWith("<>") || type.Name.StartsWith("VB$"))
+                   && (type.Attributes & TypeAttributes.NotPublic) == TypeAttributes.NotPublic;
+        }
+
 
         public static string GetPrettyName(this StackFrame frame)
         {

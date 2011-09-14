@@ -122,5 +122,21 @@ namespace Minimod.PrettyTypeSignatures
             type.GetPrettyName()
                 .Should().Be.EqualTo("ClassX<T>+ClassZ");
         }
+
+        [Test]
+        public void EmptyAnonymous_PrettyName()
+        {
+            Type type = new { }.GetType();
+            type.GetPrettyName()
+                .Should().Be.EqualTo("Anonymous");
+        }
+
+        [Test]
+        public void AnonymousWithProps_PrettyName()
+        {
+            Type type = new { StringProp = "", IntProp = 1 }.GetType();
+            type.GetPrettyName()
+                .Should().Be.EqualTo("Anonymous<String, Int32>");
+        }
     }
 }
