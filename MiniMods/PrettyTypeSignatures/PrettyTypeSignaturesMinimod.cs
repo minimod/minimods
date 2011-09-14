@@ -9,7 +9,7 @@ using System.Text;
 namespace Minimod.PrettyTypeSignatures
 {
     /// <summary>
-    /// Minimod.PrettyTypeSignatures, Version 0.9
+    /// Minimod.PrettyTypeSignatures, Version 0.9.1
     /// <para>A minimod with reflection extensions, printing nice type and type member names.</para>
     /// </summary>
     /// <remarks>
@@ -92,8 +92,8 @@ namespace Minimod.PrettyTypeSignatures
                                                      .Skip(declaringGenArgsCount)
                                                      .ToArray();
 
-            var simpleTypeName = type.Name;
-            if (CheckIfAnonymousType(type))
+            var simpleTypeName = csharpNameOrNull(type) ?? type.Name;
+            if (checkIfAnonymousType(type))
             {
                 simpleTypeName = "Anonymous";
             }
@@ -116,7 +116,7 @@ namespace Minimod.PrettyTypeSignatures
             return sb.ToString();
         }
 
-        private static bool CheckIfAnonymousType(Type type)
+        private static bool checkIfAnonymousType(Type type)
         {
             if (type == null)
                 throw new ArgumentNullException("type");
@@ -128,6 +128,32 @@ namespace Minimod.PrettyTypeSignatures
                    && (type.Attributes & TypeAttributes.NotPublic) == TypeAttributes.NotPublic;
         }
 
+        private static string csharpNameOrNull(Type type)
+        {
+            var map = new Dictionary<Type, string>
+                          {
+                              {typeof (bool), "bool"},
+                              {typeof (byte), "byte"},
+                              {typeof (sbyte), "sbyte"},
+                              {typeof (char), "char"},
+                              {typeof (decimal), "decimal"},
+                              {typeof (double), "double"},
+                              {typeof (float), "float"},
+                              {typeof (int), "int"},
+                              {typeof (uint), "uint"},
+                              {typeof (long), "long"},
+                              {typeof (ulong), "ulong"},
+                              {typeof (object), "object"},
+                              {typeof (short), "short"},
+                              {typeof (ushort), "ushort"},
+                              {typeof (string), "string"},
+                              {typeof (void), "void"}
+                          };
+
+            string shortName;
+            map.TryGetValue(type, out shortName);
+            return shortName;
+        }
 
         public static string GetPrettyName(this StackFrame frame)
         {

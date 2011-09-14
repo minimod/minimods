@@ -78,7 +78,7 @@
     <Compile Include="PrettyText\PrettyTextMinimodTests.cs" />
     <Compile Include="PrettyTypeSignatures\ClassA.cs" />
     <Compile Include="PrettyTypeSignatures\ClassX.cs" />
-    <Compile Include="PrettyTypeSignatures\PrettyTextMinimodTests.cs" />
+    <Compile Include="PrettyTypeSignatures\PrettyTypeSignaturesTests.cs" />
     <Compile Include="PrettyText\PrettyTextMinimod.cs" />
     <Compile Include="PrettyTypeSignatures\PrettyTypeSignaturesMinimod.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -124,6 +124,9 @@
     <None Include="ThreadVariable\Minimod.ThreadVariable.0.9.nupkg" />
     <None Include="ThreadVariable\ThreadVariableMinimod.nuspec" />
     <None Include="ZeroMQMessageBus\ZeroMQMessageBusMinimod.nuspec" />
+  </ItemGroup>
+  <ItemGroup>
+    <WebReferences Include="Web References\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
