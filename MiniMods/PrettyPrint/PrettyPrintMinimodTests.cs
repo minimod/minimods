@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Text;
 using Minimod.PrettyText;
 using NUnit.Framework;
 using SharpTestsEx;
@@ -50,8 +48,8 @@ namespace Minimod.PrettyPrint
             testAndLog(() => new DateTime(2000, 1, 1, 0, 0, 0, DateTimeKind.Local), "2000-01-01 (+01:00)");
 
             Console.WriteLine("// DateTimeOffset-handling");
-            testAndLog(() => new DateTimeOffset(2000, 1, 1, 0, 0, 0, 0, TimeSpan.Zero), "DateTimeOffset { 2000-01-01 01:00 (+01:00), 2000-01-01 (UTC) }");
-            testAndLog(() => new DateTimeOffset(2000, 1, 1, 0, 0, 0, 0, TimeSpan.FromHours(-1)), "DateTimeOffset { 2000-01-01 02:00 (+01:00), 2000-01-01 01:00 (UTC) }");
+            testAndLog(() => new DateTimeOffset(2000, 1, 1, 0, 0, 0, 0, TimeSpan.Zero), "<DateTimeOffset> { 2000-01-01 01:00 (+01:00), 2000-01-01 (UTC) }");
+            testAndLog(() => new DateTimeOffset(2000, 1, 1, 0, 0, 0, 0, TimeSpan.FromHours(-1)), "<DateTimeOffset> { 2000-01-01 02:00 (+01:00), 2000-01-01 01:00 (UTC) }");
         }
 
         [Test]
@@ -148,6 +146,14 @@ namespace Minimod.PrettyPrint
         }
 
         [Test]
+        public void PrettyPrint_FilledAnonymousTypeMultiline_PrintsNicely()
+        {
+            testAndLog(() => new { myint = 1 }, @"{
+  myint = 1
+}", s => s.PreferMultiline(true));
+        }
+
+        [Test]
         public void PrettyPrint_PersonWithName_PropertiesMultiLine()
         {
             testAndLog(() => new PersonWithNameField { Name = "Lars" }, @"Lars <PersonWithNameField>");
@@ -186,6 +192,22 @@ Germany"
 }", s => s.PreferMultiline(true));
         }
 
+        [Test]
+        public void PrettyPrint_SingleIgnoredProp_ShouldPrintTypeName()
+        {
+            testAndLog(() => new PersonWithNameField { Name = "Name" },
+                "<PersonWithNameField>",
+                s => s.IgnoreMember((PersonWithNameField p) => p.Name));
+        }
+
+        [Test]
+        public void PrettyPrint_CustomPropFormatter_ShouldUseRegisteredFormatter()
+        {
+            testAndLog(() => new PersonWithNameField { Name = "Name" },
+                "_Name_ <PersonWithNameField>",
+                s => s.RegisterPropertyFormatterFor((PersonWithNameField p) => p.Name, _ => "_" + _ + "_"));
+        }
+
         private void testAndLog<T>(Expression<Func<T>> func, string expected)
         {
             testAndLog(func, expected, s => s);
@@ -203,6 +225,7 @@ Germany"
             string actual = func.Compile().Invoke().PrettyPrint(customize.Compile());
 
             Console.WriteLine(actual.SplitLines().Select(line => "// " + line).JoinLines());
+            Console.WriteLine();
 
             actual.Should().Be(expected);
         }
