@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
 using Minimod.PrettyText;
@@ -8,6 +9,26 @@ using SharpTestsEx;
 
 namespace Minimod.PrettyPrint
 {
+    [TestFixture]
+    public class PrettyPrintMinimodSamples
+    {
+        [Test]
+        public void Sample1_UglyConsoleWriteLines()
+        {
+            var value = new Dictionary<string, int> { { "A", 1 }, { "B", 2 } };
+            Console.WriteLine(value);
+            Console.WriteLine(value.PrettyPrint());
+        }
+
+        [Test]
+        public void Sample2_UglyArray()
+        {
+            var value = new[] { TimeSpan.MinValue, DateTime.Now.TimeOfDay };
+            Console.WriteLine(value);
+            Console.WriteLine(value.PrettyPrint());
+        }
+    }
+
     [TestFixture]
     public class PrettyPrintMinimodTests
     {
@@ -55,6 +76,10 @@ namespace Minimod.PrettyPrint
         [Test]
         public void PrettyPrint_TimeSpan_ShouldPrintNiceOutput()
         {
+            testAndLog(() => TimeSpan.Zero, "<TimeSpan.Zero>");
+            testAndLog(() => TimeSpan.MinValue, "<TimeSpan.MinValue>");
+            testAndLog(() => TimeSpan.MaxValue, "<TimeSpan.MaxValue>");
+
             testAndLog(() => TimeSpan.FromMilliseconds(1), "1 ms");
             testAndLog(() => TimeSpan.FromMilliseconds(1000), "1 s");
             testAndLog(() => TimeSpan.FromMilliseconds(1020), "1.020 s");
@@ -206,6 +231,37 @@ Germany"
             testAndLog(() => new PersonWithNameField { Name = "Name" },
                 "_Name_ <PersonWithNameField>",
                 s => s.RegisterPropertyFormatterFor((PersonWithNameField p) => p.Name, _ => "_" + _ + "_"));
+        }
+
+        [Test]
+        public void PrettyPrint_Directory_ShouldPrintSelectedPropsOnly()
+        {
+            var sysDir = new DirectoryInfo(Environment.SystemDirectory);
+            var prettyPrint = sysDir.PrettyPrint();
+            Console.WriteLine(prettyPrint);
+            prettyPrint.Should()
+                .StartWith(sysDir.FullName + @" <DirectoryInfo>")
+                .And.Contain("Exists = True")
+                .And.Not.Contain("Directory = ")
+                .And.Not.Contain("Root = ")
+                .And.Not.Contain("CreationTimeUtc = ")
+                ;
+        }
+
+        [Test]
+        public void PrettyPrint_File_ShouldPrintSelectedPropsOnly()
+        {
+            var file = new DirectoryInfo(Environment.SystemDirectory).GetFiles()[0];
+            var prettyPrint = file.PrettyPrint();
+            Console.WriteLine(prettyPrint);
+            prettyPrint.Should()
+                .StartWith(file.Name + @" <FileInfo>")
+                .And.Contain("Exists = True")
+                .And.Contain("Directory = " + file.DirectoryName)
+                .And.Not.Contain("DirectoryName = ")
+                .And.Not.Contain("IsReadOnly = ")
+                .And.Not.Contain("Attributes = ")
+                ;
         }
 
         private void testAndLog<T>(Expression<Func<T>> func, string expected)

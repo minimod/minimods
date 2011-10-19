@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
@@ -12,7 +13,7 @@ using Minimod.PrettyTypeSignatures;
 namespace Minimod.PrettyPrint
 {
     /// <summary>
-    /// <h1>Minimod.PrettyPrint, Version 0.8.6, Copyright © Lars Corneliussen 2011</h1>
+    /// <h1>Minimod.PrettyPrint, Version 0.8.7, Copyright © Lars Corneliussen 2011</h1>
     /// <para>Creates nice textual representations of any objects. Mostly meant for debug/informational output.</para>
     /// </summary>
     /// <remarks>
@@ -37,6 +38,7 @@ namespace Minimod.PrettyPrint
             DateTimeFormatter.Register(settings);
             TimeSpanFormatter.Register(settings);
             GenericFormatter.Register(settings);
+            FileSystemInfoFormatter.Register(settings);
 
             settings.OmitNullMembers(true);
 
@@ -60,6 +62,9 @@ namespace Minimod.PrettyPrint
 
             private Dictionary<Type, Func<object, string>> _customFormatters =
                 new Dictionary<Type, Func<object, string>>();
+
+            private Dictionary<Type, string> _customPrependedPropNames =
+                new Dictionary<Type, string>();
 
             /// <summary>
             /// if a property formatter is null, the property will be ignored
@@ -149,6 +154,21 @@ namespace Minimod.PrettyPrint
                 return this;
             }
 
+            public Settings RegisterCustomPrependProperty<T, Prop>(Expression<Func<T, Prop>> member)
+            {
+                return RegisterCustomPrependProperty(typeof(T), getMemberName(member));
+            }
+
+            public Settings RegisterCustomPrependProperty(Type type, string propertyName)
+            {
+                if (type == null) throw new ArgumentNullException("type");
+                if (propertyName == null) throw new ArgumentNullException("propertyName");
+
+                _customPrependedPropNames.Add(type, propertyName);
+
+                return this;
+            }
+
             private static string getMemberName(LambdaExpression expression)
             {
                 if (expression == null) throw new ArgumentNullException("expression");
@@ -179,7 +199,8 @@ namespace Minimod.PrettyPrint
                 var propsByType = _customMemberFormatters
                     .Where(byType => byType.Key.IsAssignableFrom(anyObject.GetType()))
                     .Select(byType => byType.Value)
-                    .FirstOrDefault();
+                    .SelectMany(dict => dict)
+                    .ToDictionary(kv => kv.Key, kv => kv.Value);
 
 
                 if (propsByType != null && propsByType.TryGetValue(property, out formatter))
@@ -198,6 +219,16 @@ namespace Minimod.PrettyPrint
                 }
 
                 return false;
+            }
+
+
+            public string GetCustomPrependedPropName(Type actualType)
+            {
+                return _customPrependedPropNames
+                           .Where(t => t.Key.IsAssignableFrom(actualType))
+                           .Select(kv => kv.Value)
+                           .FirstOrDefault()
+                       ?? (_inner != null ? _inner.GetCustomPrependedPropName(actualType) : null);
             }
 
             public Settings PreferMultiline(bool multiline)
@@ -314,7 +345,7 @@ namespace Minimod.PrettyPrint
         }
 
         /// <summary>
-        /// Tries to figure out a nice format
+        /// Tries to figure out a nice format on its own.
         /// </summary>
         public class GenericFormatter
         {
@@ -336,6 +367,10 @@ namespace Minimod.PrettyPrint
 
             public static string Format(Type actualType, object anyObject, Settings settings)
             {
+                if (actualType == null) throw new ArgumentNullException("actualType");
+                if (anyObject == null) throw new ArgumentNullException("anyObject");
+                if (settings == null) throw new ArgumentNullException("settings");
+
                 var members =
                     findAndFormatMembers(anyObject, settings, actualType)
                         .Where(m => m.Value != null || (settings.OmitsNullMembers ?? false))
@@ -404,8 +439,9 @@ namespace Minimod.PrettyPrint
 
             private static string formatPropertyList(Type actualType, MemberDetails[] members, Settings settings)
             {
-                var prependedProp = members.Where(_ => _.Name == "Name").FirstOrDefault();
-                var contentProps = members.Where(_ => _.Name != "Name").ToArray();
+                var prependedPropName = settings.GetCustomPrependedPropName(actualType) ?? "Name";
+                var prependedProp = members.Where(_ => _.Name == prependedPropName).FirstOrDefault();
+                var contentProps = members.Where(_ => _.Name != prependedPropName).ToArray();
 
                 List<string> parts = new List<string>();
                 if (prependedProp != null && prependedProp.Value != null)
@@ -507,6 +543,21 @@ namespace Minimod.PrettyPrint
 
             public static string Format(TimeSpan timeSpan)
             {
+                if (timeSpan == TimeSpan.Zero)
+                {
+                    return "<TimeSpan.Zero>";
+                }
+
+                if (timeSpan == TimeSpan.MinValue)
+                {
+                    return "<TimeSpan.MinValue>";
+                }
+
+                if (timeSpan == TimeSpan.MaxValue)
+                {
+                    return "<TimeSpan.MaxValue>";
+                }
+
                 if (timeSpan < TimeSpan.FromSeconds(1))
                 {
                     return milliseconds(timeSpan);
@@ -589,6 +640,33 @@ namespace Minimod.PrettyPrint
                                                                                 ? ""
                                                                                 : ".{4:D3}"))) + " d", timeSpan.Days,
                                      timeSpan.Hours, timeSpan.Minutes, timeSpan.Seconds, timeSpan.Milliseconds);
+            }
+        }
+
+        /// <summary>
+        /// Tries to figure out a nice format on its own.
+        /// </summary>
+        public class FileSystemInfoFormatter
+        {
+            public static void Register(Settings settings)
+            {
+                //settings.RegisterPropertyFormatterFor((DirectoryInfo fs) => fs.Parent, p => p == null ? null : p.FullName);
+                settings.RegisterCustomPrependProperty((DirectoryInfo fs) => fs.FullName);
+                settings.IgnoreMember((DirectoryInfo fs) => fs.Name);
+                settings.IgnoreMember((DirectoryInfo fs) => fs.Parent);
+                settings.IgnoreMember((DirectoryInfo fs) => fs.Root);
+
+                settings.RegisterPropertyFormatterFor((FileInfo fs) => fs.Directory, dir => dir.FullName);
+                settings.IgnoreMember((FileInfo fs) => fs.DirectoryName);
+                settings.IgnoreMember((FileInfo fs) => fs.IsReadOnly);
+                settings.IgnoreMember((FileInfo fs) => fs.FullName);
+
+
+                settings.IgnoreMember((FileSystemInfo fs) => fs.Extension);
+                settings.IgnoreMember((FileSystemInfo fs) => fs.CreationTimeUtc);
+                settings.IgnoreMember((FileSystemInfo fs) => fs.LastAccessTimeUtc);
+                settings.IgnoreMember((FileSystemInfo fs) => fs.LastWriteTimeUtc);
+                settings.IgnoreMember((FileSystemInfo fs) => fs.Attributes);
             }
         }
     }
