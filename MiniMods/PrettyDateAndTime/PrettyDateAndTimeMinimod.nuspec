@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+  <metadata>
+    <id>Minimod.PrettyDateAndTime</id>
+    <version>0.8.0</version>
+    <authors>Lars Corneliussen</authors>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <licenseUrl>http://www.apache.org/licenses/LICENSE-2.0</licenseUrl>
+    <tags>minimod</tags>
+    <summary>Formats DateTime, DateTimeOffset and TimeSpan in a very readable manner.</summary>
+    <description xml:space="preserve">Extends DateTime, DateTimeOffset and Timespan by a method called 'GetPrettyString()'.</description>
+  </metadata>
+  <files>
+    <file src="PrettyDateAndTimeMinimod.cs" target="content\Minimods\Minimod.PrettyDateAndTime.Generated.cs" />
+  </files>
+</package>

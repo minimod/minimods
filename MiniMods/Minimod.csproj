@@ -58,6 +58,7 @@
     <Reference Include="System.Reactive">
       <HintPath>..\packages\Rx-Main.1.0.10621\lib\Net4\System.Reactive.dll</HintPath>
     </Reference>
+    <Reference Include="System.Web" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -73,6 +74,8 @@
     <Compile Include="Linq2Dictionary\Linq2DictionaryTests.cs" />
     <Compile Include="Flattener\FlattenerMinimod.cs" />
     <Compile Include="NestedDictionary\NestedDictionaryMinimod.cs" />
+    <Compile Include="PrettyDateAndTime\PrettyDataAndTimeMinimodTests.cs" />
+    <Compile Include="PrettyDateAndTime\PrettyDateAndTimeMinimod.cs" />
     <Compile Include="PrettyPrint\PrettyPrintMinimod.cs" />
     <Compile Include="PrettyPrint\PrettyPrintMinimodTests.cs" />
     <Compile Include="PrettyText\PrettyTextMinimodTests.cs" />
@@ -109,6 +112,9 @@
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>
+    <None Include="PrettyDateAndTime\PrettyDateAndTimeMinimod.nuspec">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="PrettyPrint\PrettyPrintMinimod.nuspec">
       <SubType>Designer</SubType>
     </None>
@@ -128,6 +134,7 @@
   <ItemGroup>
     <WebReferences Include="Web References\" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

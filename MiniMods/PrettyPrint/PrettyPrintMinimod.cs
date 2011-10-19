@@ -1,19 +1,21 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text;
+using Minimod.PrettyDateAndTime;
 using Minimod.PrettyText;
 using Minimod.PrettyTypeSignatures;
 
 namespace Minimod.PrettyPrint
 {
     /// <summary>
-    /// <h1>Minimod.PrettyPrint, Version 0.8.7, Copyright © Lars Corneliussen 2011</h1>
+    /// <h1>Minimod.PrettyPrint, Version 0.8.9, Copyright © Lars Corneliussen 2011</h1>
     /// <para>Creates nice textual representations of any objects. Mostly meant for debug/informational output.</para>
     /// </summary>
     /// <remarks>
@@ -30,13 +32,18 @@ namespace Minimod.PrettyPrint
         {
             var settings = new Settings();
 
-            settings.RegisterFormatterFor<Type>(t => t.GetPrettyName());
-            settings.RegisterFormatterFor<MethodBase>(m => m.GetPrettyName());
+            // integration with PrettyTypeSignatures
+            settings.RegisterFormatterFor<Type>(PrettyTypeSignaturesMinimod.GetPrettyName);
+            settings.RegisterFormatterFor<MethodBase>(PrettyTypeSignaturesMinimod.GetPrettyName);
+            settings.RegisterFormatterFor<StackFrame>(PrettyTypeSignaturesMinimod.GetPrettyName);
+
+            // integration with PrettyDateAndTime
+            settings.RegisterFormatterFor<DateTime>(PrettyDateAndTimeMinimod.GetPrettyString);
+            settings.RegisterFormatterFor<DateTimeOffset>(PrettyDateAndTimeMinimod.GetPrettyString);
+            settings.RegisterFormatterFor<TimeSpan>(PrettyDateAndTimeMinimod.GetPrettyString);
 
             settings.RegisterFormatterFor<Guid>(formatter);
 
-            DateTimeFormatter.Register(settings);
-            TimeSpanFormatter.Register(settings);
             GenericFormatter.Register(settings);
             FileSystemInfoFormatter.Register(settings);
 
@@ -56,9 +63,16 @@ namespace Minimod.PrettyPrint
             return new Settings(DefaultSettings);
         }
 
+        public delegate string CustomMemberFormatter(object memberValue, string memberName, object memberOwner, Settings settings);
+        public delegate string CustomMemberFormatter<TOwner, TProp>(TProp memberValue, string memberName, TOwner memberOwner, Settings settings);
+
+        public delegate string CustomMemberErrorFormatter(Exception memberError, string memberName, object memberOwner, Settings settings);
+        public delegate string CustomMemberErrorFormatter<TOwner>(Exception memberError, string memberName, TOwner memberOwner, Settings settings);
+
         public class Settings
         {
             private readonly Settings _inner;
+
 
             private Dictionary<Type, Func<object, string>> _customFormatters =
                 new Dictionary<Type, Func<object, string>>();
@@ -67,10 +81,16 @@ namespace Minimod.PrettyPrint
                 new Dictionary<Type, string>();
 
             /// <summary>
-            /// if a property formatter is null, the property will be ignored
+            /// if a member formatter returns null, the member will be ignored
             /// </summary>
-            private Dictionary<Type, Dictionary<string, Func<object, string>>> _customMemberFormatters =
-                new Dictionary<Type, Dictionary<string, Func<object, string>>>();
+            private Dictionary<Type, Dictionary<string, CustomMemberFormatter>> _customMemberFormatters =
+                new Dictionary<Type, Dictionary<string, CustomMemberFormatter>>();
+
+            /// <summary>
+            /// if a member error formatter returns null, the member error will be ignored
+            /// </summary>
+            private Dictionary<Type, Dictionary<string, CustomMemberErrorFormatter>> _customMemberErrorFormatters =
+                new Dictionary<Type, Dictionary<string, CustomMemberErrorFormatter>>();
 
             private bool? _prefersMultiline;
 
@@ -121,50 +141,64 @@ namespace Minimod.PrettyPrint
                 return this;
             }
 
+            #region Custom Member Formatting
             public Settings IgnoreMember<T, Prop>(Expression<Func<T, Prop>> member)
             {
                 return IgnoreMember(typeof(T), getMemberName(member));
             }
 
-            public Settings IgnoreMember(Type type, string propertyName)
+            public Settings IgnoreMember(Type type, string memberName)
             {
-                return RegisterPropertyFormatterFor(type, propertyName, o => null);
+                return RegisterMemberFormatterFor(type, memberName, (memberValue, memberName2, memberOwner, settings) => null);
             }
 
-            public Settings RegisterPropertyFormatterFor<T, Prop>(Expression<Func<T, Prop>> member,
-                                                                  Func<Prop, string> formatter)
+            public Settings RegisterMemberFormatterFor<T, Prop>(Expression<Func<T, Prop>> member,
+                                                                Func<Prop, string> formatter)
             {
-                return RegisterPropertyFormatterFor(typeof(T), getMemberName(member), o => formatter((Prop)o));
+                return RegisterMemberFormatterFor(typeof(T), getMemberName(member),
+                                                  (memberValue, memberName, memberOwner, settings) => formatter((Prop)memberValue));
             }
 
-            public Settings RegisterPropertyFormatterFor(Type type, string propertyName, Func<object, string> formatter)
+            public Settings RegisterMemberFormatterFor<TOwner, TProp>(Expression<Func<TOwner, TProp>> member,
+                                                                  CustomMemberFormatter<TOwner, TProp> formatter)
+            {
+                return RegisterMemberFormatterFor(typeof(TOwner), getMemberName(member),
+                    (memberValue, memberName, memberOwner, settings) => formatter((TProp)memberValue, memberName, (TOwner)memberOwner, settings));
+            }
+
+            public Settings RegisterMemberFormatterFor(Type type, string memberName, Func<object, string> formatter)
+            {
+                return RegisterMemberFormatterFor(type, memberName, (memberValue, memberName2, memberOwner, settings) => formatter(memberValue));
+            }
+
+            public Settings RegisterMemberFormatterFor(Type type, string memberName, CustomMemberFormatter formatter)
             {
                 if (type == null) throw new ArgumentNullException("type");
-                if (propertyName == null) throw new ArgumentNullException("propertyName");
+                if (memberName == null) throw new ArgumentNullException("memberName");
                 if (formatter == null) throw new ArgumentNullException("formatter");
 
-                Dictionary<string, Func<object, string>> propFormatters;
+                Dictionary<string, CustomMemberFormatter> propFormatters;
                 if (!_customMemberFormatters.TryGetValue(type, out propFormatters))
                 {
-                    _customMemberFormatters[type] = (propFormatters = new Dictionary<string, Func<object, string>>());
+                    _customMemberFormatters[type] = (propFormatters = new Dictionary<string, CustomMemberFormatter>());
                 }
 
-                propFormatters.Add(propertyName, formatter);
+                propFormatters.Add(memberName, formatter);
 
                 return this;
             }
 
-            public Settings RegisterCustomPrependProperty<T, Prop>(Expression<Func<T, Prop>> member)
+            public Settings RegisterCustomPrependMember<T, Prop>(Expression<Func<T, Prop>> member)
             {
-                return RegisterCustomPrependProperty(typeof(T), getMemberName(member));
+                return RegisterCustomPrependMember(typeof(T), getMemberName(member));
             }
 
-            public Settings RegisterCustomPrependProperty(Type type, string propertyName)
+            public Settings RegisterCustomPrependMember(Type type, string memberName)
             {
                 if (type == null) throw new ArgumentNullException("type");
-                if (propertyName == null) throw new ArgumentNullException("propertyName");
+                if (memberName == null) throw new ArgumentNullException("memberName");
 
-                _customPrependedPropNames.Add(type, propertyName);
+                _customPrependedPropNames.Add(type, memberName);
 
                 return this;
             }
@@ -182,17 +216,8 @@ namespace Minimod.PrettyPrint
                     "Unsupported expression type: " + expression.Body.GetType(), "expression");
             }
 
-            public Func<object, string> GetCustomFormatter(object anyObject)
-            {
-                return _customFormatters
-                           .Where(t => t.Key.IsAssignableFrom(anyObject.GetType()))
-                           .Select(kv => kv.Value)
-                           .FirstOrDefault()
-                       ?? (_inner != null ? _inner.GetCustomFormatter(anyObject) : null);
-            }
-
-            internal bool tryGetCustomMemberFormatter(object anyObject, string property,
-                                                      out Func<object, string> formatter)
+            internal bool tryGetCustomMemberFormatter(object anyObject, string memberName,
+                                                      out CustomMemberFormatter formatter)
             {
                 formatter = null;
 
@@ -203,7 +228,7 @@ namespace Minimod.PrettyPrint
                     .ToDictionary(kv => kv.Key, kv => kv.Value);
 
 
-                if (propsByType != null && propsByType.TryGetValue(property, out formatter))
+                if (propsByType != null && propsByType.TryGetValue(memberName, out formatter))
                 {
                     return true;
                 }
@@ -213,12 +238,115 @@ namespace Minimod.PrettyPrint
                     return false;
                 }
 
-                if (_inner.tryGetCustomMemberFormatter(anyObject, property, out formatter))
+                if (_inner.tryGetCustomMemberFormatter(anyObject, memberName, out formatter))
                 {
                     return true;
                 }
 
                 return false;
+            }
+            #endregion
+
+            #region Custom MemberError Formatting
+            public Settings IgnoreMemberError<TOwner, TMember>(Expression<Func<TOwner, TMember>> member)
+            {
+                return IgnoreMemberError(typeof(TOwner), getMemberName(member));
+            }
+
+            public Settings IgnoreMemberError(Type type, string memberName)
+            {
+                return RegisterMemberErrorFormatterFor(type, memberName, (memberAccessError, memberName2, memberOwner, settings) => null);
+            }
+
+            public Settings RegisterMemberErrorFormatterFor<TOwner, TMember>(Expression<Func<TOwner, TMember>> member,
+                                                                Func<Exception, string> formatter)
+            {
+                return RegisterMemberErrorFormatterFor(typeof(TOwner), getMemberName(member),
+                                                  (memberAccessError, memberName, memberOwner, settings) => formatter(memberAccessError));
+            }
+
+            public Settings RegisterMemberErrorFormatterFor<TOwner, TMember>(Expression<Func<TOwner, TMember>> member,
+                                                                  CustomMemberErrorFormatter<TOwner> formatter)
+            {
+                return RegisterMemberErrorFormatterFor(typeof(TOwner), getMemberName(member),
+                    (memberError, memberName, memberOwner, settings) => formatter(memberError, memberName, (TOwner)memberOwner, settings));
+            }
+
+            public Settings RegisterMemberErrorFormatterFor(Type type, string memberName, Func<object, string> formatter)
+            {
+                return RegisterMemberErrorFormatterFor(type, memberName, (memberAccessError, memberName2, memberOwner, settings) => formatter(memberAccessError));
+            }
+
+            public Settings RegisterMemberErrorFormatterFor(Type type, string memberName, CustomMemberErrorFormatter formatter)
+            {
+                if (type == null) throw new ArgumentNullException("type");
+                if (memberName == null) throw new ArgumentNullException("memberName");
+                if (formatter == null) throw new ArgumentNullException("formatter");
+
+                Dictionary<string, CustomMemberErrorFormatter> propFormatters;
+                if (!_customMemberErrorFormatters.TryGetValue(type, out propFormatters))
+                {
+                    _customMemberErrorFormatters[type] = (propFormatters = new Dictionary<string, CustomMemberErrorFormatter>());
+                }
+
+                propFormatters.Add(memberName, formatter);
+
+                return this;
+            }
+
+            public Settings RegisterCustomPrependMemberError<T, Prop>(Expression<Func<T, Prop>> member)
+            {
+                return RegisterCustomPrependMemberError(typeof(T), getMemberName(member));
+            }
+
+            public Settings RegisterCustomPrependMemberError(Type type, string memberName)
+            {
+                if (type == null) throw new ArgumentNullException("type");
+                if (memberName == null) throw new ArgumentNullException("memberName");
+
+                _customPrependedPropNames.Add(type, memberName);
+
+                return this;
+            }
+
+            internal bool tryGetCustomMemberErrorFormatter(object anyObject, string memberName,
+                                                      out CustomMemberErrorFormatter formatter)
+            {
+                formatter = null;
+
+                var propsByType = _customMemberErrorFormatters
+                    .Where(byType => byType.Key.IsAssignableFrom(anyObject.GetType()))
+                    .Select(byType => byType.Value)
+                    .SelectMany(dict => dict)
+                    .ToDictionary(kv => kv.Key, kv => kv.Value);
+
+
+                if (propsByType != null && propsByType.TryGetValue(memberName, out formatter))
+                {
+                    return true;
+                }
+
+                if (_inner == null)
+                {
+                    return false;
+                }
+
+                if (_inner.tryGetCustomMemberErrorFormatter(anyObject, memberName, out formatter))
+                {
+                    return true;
+                }
+
+                return false;
+            }
+            #endregion
+
+            public Func<object, string> GetCustomFormatter(object anyObject)
+            {
+                return _customFormatters
+                           .Where(t => t.Key.IsAssignableFrom(anyObject.GetType()))
+                           .Select(kv => kv.Value)
+                           .FirstOrDefault()
+                       ?? (_inner != null ? _inner.GetCustomFormatter(anyObject) : null);
             }
 
 
@@ -381,19 +509,19 @@ namespace Minimod.PrettyPrint
                 if (mayFormatKeyValuePairs(members, out result))
                     return result;
 
-                return formatPropertyList(actualType, members, settings);
+                return formatMemberList(actualType, members, settings);
             }
 
             private static bool mayFormatKeyValuePairs(MemberDetails[] members, out string format)
             {
-                var keyProperty = members.Where(_ => _.Name == "Key").FirstOrDefault();
-                var valueProperty = members.Where(_ => _.Name == "Value").FirstOrDefault();
+                var keyMember = members.Where(_ => _.Name == "Key").FirstOrDefault();
+                var valueMember = members.Where(_ => _.Name == "Value").FirstOrDefault();
 
-                if (keyProperty != null && valueProperty != null && members.Length == 2)
+                if (keyMember != null && valueMember != null && members.Length == 2)
                 {
                     {
-                        format = keyProperty.Pretty + " => " +
-                                 valueProperty.Pretty;
+                        format = keyMember.Pretty + " => " +
+                                 valueMember.Pretty;
                         return true;
                     }
                 }
@@ -407,27 +535,51 @@ namespace Minimod.PrettyPrint
                 var properties =
                     from prop in actualType.GetMembers().OfType<PropertyInfo>()
                     where !prop.GetGetMethod().IsStatic && prop.GetIndexParameters().Length == 0
+                    let safeValue = getValueOrException(anyObject, () => prop.GetValue(anyObject, new object[0]))
                     select
                         new
                             {
                                 name = prop.Name,
                                 type = prop.PropertyType,
-                                value = prop.GetValue(anyObject, new object[0])
+                                value = safeValue.Value,
+                                error = safeValue.Error
                             };
 
                 var fields =
                     from prop in actualType.GetMembers().OfType<FieldInfo>()
                     where !prop.IsStatic
-                    select new { name = prop.Name, type = prop.FieldType, value = prop.GetValue(anyObject) };
+                    let safeValue = getValueOrException(anyObject, () => prop.GetValue(anyObject))
+                    select new
+                    {
+                        name = prop.Name,
+                        type = prop.FieldType,
+                        value = safeValue.Value,
+                        error = safeValue.Error
+                    };
 
                 foreach (var m in fields.Union(properties))
                 {
-                    Func<object, string> propFormatter;
-                    bool hasCustomFormatter = settings.tryGetCustomMemberFormatter(anyObject, m.name, out propFormatter);
+                    string pretty = null;
 
-                    string pretty = hasCustomFormatter
-                                        ? propFormatter(m.value)
-                                        : m.value.PrettyPrint(m.type, settings);
+                    CustomMemberFormatter propFormatter;
+                    bool hasCustomFormatter = settings.tryGetCustomMemberFormatter(anyObject, m.name,
+                                                                                   out propFormatter);
+
+                    CustomMemberErrorFormatter propErrorFormatter;
+                    bool hasCustomErrorFormatter = settings.tryGetCustomMemberErrorFormatter(anyObject, m.name,
+                                                                                   out propErrorFormatter);
+                    if (m.error == null)
+                    {
+                        pretty = hasCustomFormatter
+                                     ? propFormatter(m.value, m.name, anyObject, settings)
+                                     : m.value.PrettyPrint(m.type, settings);
+                    }
+                    else
+                    {
+                        pretty = hasCustomErrorFormatter
+                            ? propErrorFormatter(m.error, m.name, anyObject, settings)
+                            : new { Name = "threw ", Exception = m.error }.PrettyPrint(settings);
+                    }
 
                     if (pretty != null)
                     {
@@ -437,7 +589,27 @@ namespace Minimod.PrettyPrint
                 }
             }
 
-            private static string formatPropertyList(Type actualType, MemberDetails[] members, Settings settings)
+            private class PropertyExecution
+            {
+                public object Value { get; set; }
+                public Exception Error { get; set; }
+            }
+
+            private static PropertyExecution getValueOrException(object anyObject, Func<object> getValue)
+            {
+                PropertyExecution result = new PropertyExecution();
+                try
+                {
+                    result.Value = getValue();
+                }
+                catch (Exception e)
+                {
+                    result.Error = e;
+                }
+                return result;
+            }
+
+            private static string formatMemberList(Type actualType, MemberDetails[] members, Settings settings)
             {
                 var prependedPropName = settings.GetCustomPrependedPropName(actualType) ?? "Name";
                 var prependedProp = members.Where(_ => _.Name == prependedPropName).FirstOrDefault();
@@ -498,150 +670,6 @@ namespace Minimod.PrettyPrint
             }
         }
 
-        public class DateTimeFormatter
-        {
-            public static void Register(Settings settings)
-            {
-                settings.RegisterFormatterFor<DateTime>(Format);
-                settings.RegisterFormatterFor<DateTimeOffset>(Format);
-            }
-
-            public static string Format(DateTime dateTime)
-            {
-                if (dateTime == DateTime.MinValue) return "<DateTime.MinValue>";
-                if (dateTime == DateTime.MaxValue) return "<DateTime.MaxValue>";
-
-                string kind = "";
-                if (dateTime.Kind == DateTimeKind.Utc)
-                    kind = " (UTC)";
-                else if (dateTime.Kind == DateTimeKind.Local)
-                    kind = dateTime.ToString(" (K)");
-
-
-                if (dateTime.TimeOfDay == TimeSpan.Zero) return dateTime.ToString("yyyy-MM-dd") + kind;
-                if (dateTime.Second + dateTime.Millisecond == 0) return dateTime.ToString("yyyy-MM-dd HH:mm") + kind;
-                if (dateTime.Millisecond == 0) return dateTime.ToString("yyyy-MM-dd HH:mm:ss") + kind;
-
-                return dateTime.ToString("yyyy-MM-dd HH:mm:ss.fff") + kind;
-            }
-
-            public static string Format(DateTimeOffset dateTime)
-            {
-                return "<DateTimeOffset> { "
-                       + Format(dateTime.LocalDateTime) + ", "
-                       + Format(dateTime.UtcDateTime)
-                       + " }";
-            }
-        }
-
-        public class TimeSpanFormatter
-        {
-            public static void Register(Settings settings)
-            {
-                settings.RegisterFormatterFor<TimeSpan>(Format);
-            }
-
-            public static string Format(TimeSpan timeSpan)
-            {
-                if (timeSpan == TimeSpan.Zero)
-                {
-                    return "<TimeSpan.Zero>";
-                }
-
-                if (timeSpan == TimeSpan.MinValue)
-                {
-                    return "<TimeSpan.MinValue>";
-                }
-
-                if (timeSpan == TimeSpan.MaxValue)
-                {
-                    return "<TimeSpan.MaxValue>";
-                }
-
-                if (timeSpan < TimeSpan.FromSeconds(1))
-                {
-                    return milliseconds(timeSpan);
-                }
-                if (timeSpan < TimeSpan.FromMinutes(1))
-                {
-                    return seconds(timeSpan);
-                }
-                if (timeSpan < TimeSpan.FromHours(1))
-                {
-                    return minutes(timeSpan);
-                }
-                if (timeSpan < TimeSpan.FromHours(24))
-                {
-                    return hours(timeSpan);
-                }
-
-                return days(timeSpan);
-            }
-
-            private static string milliseconds(TimeSpan timeSpan)
-            {
-                if (timeSpan.TotalMilliseconds % 1 == 0)
-                {
-                    return (int)timeSpan.TotalMilliseconds + " ms";
-                }
-
-                return timeSpan.TotalMilliseconds.ToString() + " ms";
-            }
-
-            private static string seconds(TimeSpan timeSpan)
-            {
-                if (timeSpan.TotalSeconds % 1 == 0)
-                {
-                    return (int)timeSpan.TotalSeconds + " s";
-                }
-
-                return string.Format("{0}.{1:D3} s", timeSpan.Seconds, timeSpan.Milliseconds);
-            }
-
-            private static string minutes(TimeSpan timeSpan)
-            {
-                if (timeSpan.TotalMinutes % 1 == 0)
-                {
-                    return (int)timeSpan.TotalMinutes + " min";
-                }
-
-                return string.Format("{0}:{1:D2}" + (timeSpan.Milliseconds == 0 ? "" : ".{2:D3}") + " min",
-                                     timeSpan.Minutes, timeSpan.Seconds, timeSpan.Milliseconds);
-            }
-
-            private static string hours(TimeSpan timeSpan)
-            {
-                if (timeSpan.TotalHours % 1 == 0)
-                {
-                    return (int)timeSpan.TotalHours + " h";
-                }
-
-                return string.Format("{0}:{1:D2}" + ((timeSpan.TotalMinutes % 1 == 0)
-                                                         ? ""
-                                                         : ":{2:D2}" + (timeSpan.TotalSeconds % 1 == 0
-                                                                            ? ""
-                                                                            : ".{3:D3}")) + " h", timeSpan.Hours,
-                                     timeSpan.Minutes, timeSpan.Seconds, timeSpan.Milliseconds);
-            }
-
-            private static string days(TimeSpan timeSpan)
-            {
-                if (timeSpan.TotalDays % 1 == 0)
-                {
-                    return (int)timeSpan.TotalDays + " d";
-                }
-
-                return string.Format("{0}.{1:D2}" +
-                                     ((timeSpan.TotalHours % 1 == 0)
-                                          ? ""
-                                          : ":{2:D2}" + ((timeSpan.TotalMinutes % 1 == 0)
-                                                             ? ""
-                                                             : ":{3:D2}" + (timeSpan.TotalSeconds % 1 == 0
-                                                                                ? ""
-                                                                                : ".{4:D3}"))) + " d", timeSpan.Days,
-                                     timeSpan.Hours, timeSpan.Minutes, timeSpan.Seconds, timeSpan.Milliseconds);
-            }
-        }
 
         /// <summary>
         /// Tries to figure out a nice format on its own.
@@ -650,23 +678,36 @@ namespace Minimod.PrettyPrint
         {
             public static void Register(Settings settings)
             {
-                //settings.RegisterPropertyFormatterFor((DirectoryInfo fs) => fs.Parent, p => p == null ? null : p.FullName);
-                settings.RegisterCustomPrependProperty((DirectoryInfo fs) => fs.FullName);
+                //settings.RegisterMemberFormatterFor((DirectoryInfo fs) => fs.Parent, p => p == null ? null : p.FullName);
+                settings.RegisterCustomPrependMember((DirectoryInfo fs) => fs.FullName);
                 settings.IgnoreMember((DirectoryInfo fs) => fs.Name);
                 settings.IgnoreMember((DirectoryInfo fs) => fs.Parent);
                 settings.IgnoreMember((DirectoryInfo fs) => fs.Root);
 
-                settings.RegisterPropertyFormatterFor((FileInfo fs) => fs.Directory, dir => dir.FullName);
+                settings.RegisterMemberFormatterFor((FileInfo fs) => fs.Directory, dir => dir.FullName);
                 settings.IgnoreMember((FileInfo fs) => fs.DirectoryName);
                 settings.IgnoreMember((FileInfo fs) => fs.IsReadOnly);
                 settings.IgnoreMember((FileInfo fs) => fs.FullName);
 
+                settings.RegisterMemberFormatterFor((FileInfo fs) => fs.Length, ignoreIfFileOrDirDoesNotExist);
+                settings.IgnoreMemberError((FileInfo fs) => fs.Length);
+
+
+                settings.RegisterMemberFormatterFor((FileSystemInfo fs) => fs.CreationTime, ignoreIfFileOrDirDoesNotExist);
+                settings.RegisterMemberFormatterFor((FileSystemInfo fs) => fs.LastWriteTime, ignoreIfFileOrDirDoesNotExist);
+                settings.RegisterMemberFormatterFor((FileSystemInfo fs) => fs.LastAccessTime, ignoreIfFileOrDirDoesNotExist);
 
                 settings.IgnoreMember((FileSystemInfo fs) => fs.Extension);
                 settings.IgnoreMember((FileSystemInfo fs) => fs.CreationTimeUtc);
                 settings.IgnoreMember((FileSystemInfo fs) => fs.LastAccessTimeUtc);
                 settings.IgnoreMember((FileSystemInfo fs) => fs.LastWriteTimeUtc);
                 settings.IgnoreMember((FileSystemInfo fs) => fs.Attributes);
+            }
+
+            private static string ignoreIfFileOrDirDoesNotExist<TMember, TFsType>(TMember memberValue, string memberName, TFsType memberOwner, Settings settings)
+                where TFsType : FileSystemInfo
+            {
+                return memberOwner.Exists ? memberValue.PrettyPrint(settings) : null;
             }
         }
     }
