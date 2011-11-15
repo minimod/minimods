@@ -65,6 +65,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Continuation\ContinuationMinimod.cs" />
     <Compile Include="FluentGenerics\FluentGenericsMinimod.cs" />
     <Compile Include="FluentGenerics\FluentGenericsMinimodTests.cs" />
     <Compile Include="JoinStrings\JoinStringsMinimod.cs" />
@@ -94,6 +95,7 @@
     <Compile Include="ZeroMQMessageBus\ZeroMQMessageBusMinimod.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Continuation\ContinuationMinimod.nuspec" />
     <None Include="FluentGenerics\FluentGenericsMinimod.nuspec">
       <SubType>Designer</SubType>
     </None>
