@@ -7,7 +7,7 @@
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <licenseUrl>http://www.apache.org/licenses/LICENSE-2.0</licenseUrl>
     <tags>minimod</tags>
-    <description xml:space="preserve">A minimod for easy to use pattern pattern matching in CSharp.</description>
+    <description xml:space="preserve">A minimod for easy to use pattern matching in CSharp.</description>
   </metadata>
   <files>
     <file src="PatternMatchingMinimod.cs" target="content\Minimods\Minimod.PatternMatching.Generated.cs" />

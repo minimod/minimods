@@ -5,7 +5,7 @@ namespace Minimod.PatternMatching
 {
     /// <summary>
     /// Minimod.PatternMatching, Version 0.0.1
-    /// <para>A minimod for easy to use pattern pattern matching in CSharp.</para>
+    /// <para>A minimod for easy to use pattern matching in CSharp.</para>
     /// </summary>
     /// <remarks>
     /// Licensed under the Apache License, Version 2.0; you may not use this file except in compliance with the License.
