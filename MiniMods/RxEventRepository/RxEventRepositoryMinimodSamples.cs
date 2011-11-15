@@ -4,14 +4,14 @@ using System.Reactive;
 using System.Reactive.Linq;
 using Minimod.RxMessageBroker;
 
-namespace Minimod.RxEventSourcing
+namespace Minimod.RxEventRepository
 {
     public class RxEventSourcingMinimodeTests
     {
         public void Sample()
         {
             var store = new List<Notification<object>>();
-            var eventStore = new RxEventSourcingMinimod(TimeSpan.FromSeconds(0), 1);
+            var eventStore = new RxEventRepositoryMinimod(TimeSpan.FromSeconds(0), 1);
             eventStore.Store<MessageTypeTwo>(RxMessageBrokerMinimod.Default.Stream, store.Add);
             eventStore.Store<MessageTypeOne>(RxMessageBrokerMinimod.Default.Stream, store.Add);
 
