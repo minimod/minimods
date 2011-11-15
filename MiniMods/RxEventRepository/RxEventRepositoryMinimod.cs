@@ -7,7 +7,7 @@ using System.Reactive.Linq;
 namespace Minimod.RxEventRepository
 {
     /// <summary>
-    /// Minimod.RxEventSourcing, Version 0.0.1
+    /// Minimod.RxEventRepository, Version 0.0.1
     /// <para>A minimod for persisting event messages using Rx.</para>
     /// </summary>
     /// <remarks>
