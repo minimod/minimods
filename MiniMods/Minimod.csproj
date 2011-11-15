@@ -73,6 +73,7 @@
     <Compile Include="Linq2Dictionary\Linq2DictionaryTests.cs" />
     <Compile Include="Flattener\FlattenerMinimod.cs" />
     <Compile Include="NestedDictionary\NestedDictionaryMinimod.cs" />
+    <Compile Include="PatternMatching\PatternMatchingMinimod.cs" />
     <Compile Include="PrettyPrint\PrettyPrintMinimod.cs" />
     <Compile Include="PrettyPrint\PrettyPrintMinimodTests.cs" />
     <Compile Include="PrettyText\PrettyTextMinimodTests.cs" />
@@ -109,6 +110,7 @@
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>
+    <None Include="PatternMatching\PatternMatchingMinimod.nuspec" />
     <None Include="PrettyPrint\PrettyPrintMinimod.nuspec">
       <SubType>Designer</SubType>
     </None>
