@@ -5,7 +5,7 @@ namespace Minimod.PatternMatching
 {
     /// <summary>
     /// Minimod.PatternMatching, Version 0.0.1
-    /// <para>A minimod for easy to use pattern matching in CSharp.</para>
+    /// <para>A minimod for easy to use NOT thread safe pattern matching in CSharp.</para>
     /// </summary>
     /// <remarks>
     /// Licensed under the Apache License, Version 2.0; you may not use this file except in compliance with the License.
@@ -18,7 +18,7 @@ namespace Minimod.PatternMatching
     public class PatternMatch<T, TResult>
     {
         private readonly T value;
-        private readonly List<Tuple<Func<T, bool>, Func<T, TResult>>> cases = new List<Tuple<Func<T, bool>, Func<T, TResult>>>();
+        private readonly List<Tuple<Func<T, bool>, Func<T, TResult>>> _cases = new List<Tuple<Func<T, bool>, Func<T, TResult>>>();
         private Func<T, TResult> elseFunc;
 
         internal PatternMatch(T value)
@@ -28,14 +28,14 @@ namespace Minimod.PatternMatching
 
         public PatternMatch<T, TResult> With(Func<T, bool> condition, Func<T, TResult> result)
         {
-            cases.Add(Tuple.Create(condition, result));
+            _cases.Add(Tuple.Create(condition, result));
             return this;
         }
 
         public PatternMatch<T, TResult> With(Func<bool> condition, Func<T, TResult> result)
         {
             Func<T, bool> func = x => condition();
-            cases.Add(Tuple.Create(func, result));
+            _cases.Add(Tuple.Create(func, result));
             return this;
         }
 
@@ -52,9 +52,9 @@ namespace Minimod.PatternMatching
         public TResult Do()
         {
             if (elseFunc != null)
-                cases.Add(
+                _cases.Add(
                     Tuple.Create<Func<T, bool>, Func<T, TResult>>(x => true, elseFunc));
-            foreach (var item in cases)
+            foreach (var item in _cases)
                 if (item.Item1(value))
                     return item.Item2(value);
 
