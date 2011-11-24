@@ -12,6 +12,7 @@
     <AssemblyName>Minimods</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <CodeContractsAssemblyMode>0</CodeContractsAssemblyMode>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -21,6 +22,31 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <CodeContractsEnableRuntimeChecking>True</CodeContractsEnableRuntimeChecking>
+    <CodeContractsRuntimeOnlyPublicSurface>False</CodeContractsRuntimeOnlyPublicSurface>
+    <CodeContractsRuntimeThrowOnFailure>True</CodeContractsRuntimeThrowOnFailure>
+    <CodeContractsRuntimeCallSiteRequires>False</CodeContractsRuntimeCallSiteRequires>
+    <CodeContractsRuntimeSkipQuantifiers>False</CodeContractsRuntimeSkipQuantifiers>
+    <CodeContractsRunCodeAnalysis>False</CodeContractsRunCodeAnalysis>
+    <CodeContractsNonNullObligations>False</CodeContractsNonNullObligations>
+    <CodeContractsBoundsObligations>False</CodeContractsBoundsObligations>
+    <CodeContractsArithmeticObligations>False</CodeContractsArithmeticObligations>
+    <CodeContractsEnumObligations>False</CodeContractsEnumObligations>
+    <CodeContractsRedundantAssumptions>False</CodeContractsRedundantAssumptions>
+    <CodeContractsRunInBackground>True</CodeContractsRunInBackground>
+    <CodeContractsShowSquigglies>False</CodeContractsShowSquigglies>
+    <CodeContractsUseBaseLine>False</CodeContractsUseBaseLine>
+    <CodeContractsEmitXMLDocs>True</CodeContractsEmitXMLDocs>
+    <CodeContractsCustomRewriterAssembly />
+    <CodeContractsCustomRewriterClass />
+    <CodeContractsLibPaths />
+    <CodeContractsExtraRewriteOptions />
+    <CodeContractsExtraAnalysisOptions />
+    <CodeContractsBaseLineFile />
+    <CodeContractsCacheAnalysisResults>False</CodeContractsCacheAnalysisResults>
+    <CodeContractsRuntimeCheckingLevel>Full</CodeContractsRuntimeCheckingLevel>
+    <CodeContractsReferenceAssembly>Build</CodeContractsReferenceAssembly>
+    <CodeContractsAnalysisWarningLevel>0</CodeContractsAnalysisWarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -33,6 +59,9 @@
   <ItemGroup>
     <Reference Include="clrzmq">
       <HintPath>..\packages\clrzmq2.2.0.10.2010112000\lib\clrzmq.dll</HintPath>
+    </Reference>
+    <Reference Include="Machine.Specifications">
+      <HintPath>..\packages\Machine.Specifications.0.4.23.0\lib\Machine.Specifications.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\packages\Newtonsoft.Json.4.0.2\lib\net40\Newtonsoft.Json.dll</HintPath>
@@ -65,6 +94,17 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="EventSourcing\FunctionalExtentions.cs" />
+    <Compile Include="EventSourcing\given_a_created_person.cs">
+      <DependentUpon>EventSource.cs</DependentUpon>
+    </Compile>
+    <Compile Include="EventSourcing\MSpecIAggregateRootExtentions.cs" />
+    <Compile Include="EventSourcing\Sample\Person.cs" />
+    <Compile Include="EventSourcing\Sample\PersonCreated.cs" />
+    <Compile Include="EventSourcing\Sample\PersonNameChanged.cs" />
+    <Compile Include="EventSourcing\when_creating_a_person.cs">
+      <DependentUpon>EventSource.cs</DependentUpon>
+    </Compile>
     <Compile Include="FluentGenerics\FluentGenericsMinimod.cs" />
     <Compile Include="FluentGenerics\FluentGenericsMinimodTests.cs" />
     <Compile Include="JoinStrings\JoinStringsMinimod.cs" />
@@ -83,8 +123,8 @@
     <Compile Include="PrettyTypeSignatures\PrettyTypeSignaturesMinimod.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="MVVM\MVVMMinimod.cs" />
-    <Compile Include="RxEventSourcing\RxEventSourcingMinimod.cs" />
-    <Compile Include="RxEventSourcing\RxEventSourcingMinimodSamples.cs" />
+    <Compile Include="EventSourcing\EventSource.cs" />
+    <Compile Include="EventSourcing\RxEventSourcingMinimod.cs" />
     <Compile Include="RxMessageBroker\RxMessageBrokerMinimod.cs" />
     <Compile Include="ThreadVariable\RealWorldExample.cs" />
     <Compile Include="ThreadVariable\TestHelper.cs" />
@@ -119,7 +159,7 @@
       <SubType>Designer</SubType>
     </None>
     <None Include="MVVM\MVVMMinimod.nuspec" />
-    <None Include="RxEventSourcing\RxEventSourcingMinimod.nuspec" />
+    <None Include="EventSourcing\RxEventSourcingMinimod.nuspec" />
     <None Include="RxMessageBroker\RxMessageBrokerMinimod.nuspec" />
     <None Include="ThreadVariable\Minimod.ThreadVariable.0.9.nupkg" />
     <None Include="ThreadVariable\ThreadVariableMinimod.nuspec" />
