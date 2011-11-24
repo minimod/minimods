@@ -68,6 +68,7 @@
     <Compile Include="Continuation\ContinuationMinimod.cs" />
     <Compile Include="FluentGenerics\FluentGenericsMinimod.cs" />
     <Compile Include="FluentGenerics\FluentGenericsMinimodTests.cs" />
+    <Compile Include="Impersonator\ImpersonatorMinimod.cs" />
     <Compile Include="JoinStrings\JoinStringsMinimod.cs" />
     <Compile Include="JoinStrings\JoinStringsMinimodTests.cs" />
     <Compile Include="Linq2Dictionary\Linq2DictionaryMinimod.cs" />
@@ -99,6 +100,7 @@
     <None Include="FluentGenerics\FluentGenericsMinimod.nuspec">
       <SubType>Designer</SubType>
     </None>
+    <None Include="Impersonator\ImpersonatorMinimod.nuspec" />
     <None Include="JoinStrings\JoinStringsMinimod.nuspec">
       <SubType>Designer</SubType>
     </None>
