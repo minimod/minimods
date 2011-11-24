@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Reflection;
 using Minimod.PrettyText;
 using NUnit.Framework;
@@ -21,11 +22,11 @@ namespace Minimod.PrettyTypeSignatures
             MethodInfo method = typeof(ClassX<int>).GetMethod("Method2");
 
             method.GetPrettyName()
-                .Should().Be.EqualTo("ClassX<Int32>.Method2<T1>(Int32 t, T1 hello) : Boolean");
+                .Should().Be.EqualTo("ClassX<int>.Method2<T1>(int t, T1 hello) : bool");
 
             method.MakeGenericMethod(typeof(bool))
                 .GetPrettyName()
-                .Should().Be.EqualTo("ClassX<Int32>.Method2<Boolean>(Int32 t, Boolean hello) : Boolean");
+                .Should().Be.EqualTo("ClassX<int>.Method2<bool>(int t, bool hello) : bool");
         }
 
         [Test]
@@ -33,7 +34,7 @@ namespace Minimod.PrettyTypeSignatures
         {
             MethodInfo method = typeof(ClassX<int>).GetMethod("Method");
             method.GetPrettyName()
-                .Should().Be.EqualTo("ClassX<Int32>.Method(Int32 t, Boolean hello) : Boolean");
+                .Should().Be.EqualTo("ClassX<int>.Method(int t, bool hello) : bool");
         }
 
         [Test]
@@ -48,14 +49,14 @@ namespace Minimod.PrettyTypeSignatures
         {
             Type type = typeof(ClassX<int>.ClassZ);
             type.GetPrettyName()
-                .Should().Be.EqualTo("ClassX<Int32>+ClassZ");
+                .Should().Be.EqualTo("ClassX<int>+ClassZ");
         }
 
         [Test]
         public void ClassXofInt_PrettyName()
         {
             Type type = typeof(ClassX<int>);
-            type.GetPrettyName().Should().Be.EqualTo("ClassX<Int32>");
+            type.GetPrettyName().Should().Be.EqualTo("ClassX<int>");
         }
 
         [Test]
@@ -64,11 +65,11 @@ namespace Minimod.PrettyTypeSignatures
             MethodInfo method = typeof(ClassX<int>.ClassY<string, string>).GetMethod("Method2");
 
             method.GetPrettyName()
-                .Should().Be.EqualTo("ClassX<Int32>+ClassY<String,String>.Method2<T3>(String t1, T3 hello) : Void");
+                .Should().Be.EqualTo("ClassX<int>+ClassY<string,string>.Method2<T3>(string t1, T3 hello) : void");
 
             method.MakeGenericMethod(typeof(bool)).GetPrettyName()
                 .Should().Be.EqualTo(
-                                        "ClassX<Int32>+ClassY<String,String>.Method2<Boolean>(String t1, Boolean hello) : Void");
+                                        "ClassX<int>+ClassY<string,string>.Method2<bool>(string t1, bool hello) : void");
         }
 
         [Test]
@@ -76,7 +77,7 @@ namespace Minimod.PrettyTypeSignatures
         {
             MethodInfo method = typeof(ClassX<int>.ClassY<string, string>).GetMethod("Method");
             method.GetPrettyName()
-                .Should().Be.EqualTo("ClassX<Int32>+ClassY<String,String>.Method(String t1, Boolean hello) : Void");
+                .Should().Be.EqualTo("ClassX<int>+ClassY<string,string>.Method(string t1, bool hello) : void");
         }
 
         [Test]
@@ -92,7 +93,7 @@ namespace Minimod.PrettyTypeSignatures
         {
             Type type = typeof(ClassX<int>.ClassY<string, string>);
             type.GetPrettyName()
-                .Should().Be.EqualTo("ClassX<Int32>+ClassY<String,String>");
+                .Should().Be.EqualTo("ClassX<int>+ClassY<string,string>");
         }
 
         [Test]
@@ -101,10 +102,10 @@ namespace Minimod.PrettyTypeSignatures
             MethodInfo method = typeof(ClassX<int>.ClassZ).GetMethod("Method2");
 
             method.GetPrettyName()
-                .Should().Be.EqualTo("ClassX<Int32>+ClassZ.Method2<T1>() : T1");
+                .Should().Be.EqualTo("ClassX<int>+ClassZ.Method2<T1>() : T1");
 
             method.MakeGenericMethod(typeof(bool)).GetPrettyName()
-                .Should().Be.EqualTo("ClassX<Int32>+ClassZ.Method2<Boolean>() : Boolean");
+                .Should().Be.EqualTo("ClassX<int>+ClassZ.Method2<bool>() : bool");
         }
 
         [Test]
@@ -112,7 +113,7 @@ namespace Minimod.PrettyTypeSignatures
         {
             MethodInfo method = typeof(ClassX<int>.ClassZ).GetMethod("Method");
             method.GetPrettyName()
-                .Should().Be.EqualTo("ClassX<Int32>+ClassZ.Method() : Int32");
+                .Should().Be.EqualTo("ClassX<int>+ClassZ.Method() : int");
         }
 
         [Test]
@@ -121,6 +122,29 @@ namespace Minimod.PrettyTypeSignatures
             Type type = typeof(ClassX<>.ClassZ);
             type.GetPrettyName()
                 .Should().Be.EqualTo("ClassX<T>+ClassZ");
+        }
+
+        [Test]
+        public void EmptyAnonymous_PrettyName()
+        {
+            Type type = new { }.GetType();
+            type.GetPrettyName()
+                .Should().Be.EqualTo("Anonymous");
+        }
+
+        [Test]
+        public void AnonymousWithProps_PrettyName()
+        {
+            Type type = new { StringProp = "", IntProp = 1 }.GetType();
+            type.GetPrettyName()
+                .Should().Be.EqualTo("Anonymous<string,int>");
+        }
+
+        [Test]
+        public void CSharpBuiltinTypes_PrettyName()
+        {
+            typeof(int).GetPrettyName().Should().Be.EqualTo("int");
+            typeof(void).GetPrettyName().Should().Be.EqualTo("void");
         }
     }
 }

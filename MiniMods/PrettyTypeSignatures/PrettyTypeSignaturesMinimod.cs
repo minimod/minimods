@@ -3,12 +3,13 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Text;
 
 namespace Minimod.PrettyTypeSignatures
 {
     /// <summary>
-    /// Minimod.PrettyTypeSignatures, Version 0.9
+    /// Minimod.PrettyTypeSignatures, Version 0.9.1
     /// <para>A minimod with reflection extensions, printing nice type and type member names.</para>
     /// </summary>
     /// <remarks>
@@ -91,20 +92,67 @@ namespace Minimod.PrettyTypeSignatures
                                                      .Skip(declaringGenArgsCount)
                                                      .ToArray();
 
-            if (trailingGenericArguments.Length == 0)
+            var simpleTypeName = csharpNameOrNull(type) ?? type.Name;
+            if (checkIfAnonymousType(type))
             {
-                sb.Append(type.Name);
-                return sb.ToString();
+                simpleTypeName = "Anonymous";
+            }
+            else if (trailingGenericArguments.Length > 0)
+            {
+                simpleTypeName = type.Name.Substring(0, type.Name.IndexOf('`'));
             }
 
-            IEnumerable<string> displayNames = trailingGenericArguments.Select(t => t.GetPrettyName());
+            sb.Append(simpleTypeName);
 
-            sb.Append(type.Name.Substring(0, type.Name.IndexOf('`')));
-            sb.Append("<");
-            sb.Append(string.Join(",", displayNames.ToArray()));
-            sb.Append(">");
+            if (trailingGenericArguments.Length > 0)
+            {
+                IEnumerable<string> displayNames = trailingGenericArguments.Select(t => t.GetPrettyName());
+
+                sb.Append("<");
+                sb.Append(string.Join(",", displayNames.ToArray()));
+                sb.Append(">");
+            }
 
             return sb.ToString();
+        }
+
+        private static bool checkIfAnonymousType(Type type)
+        {
+            if (type == null)
+                throw new ArgumentNullException("type");
+
+            // HACK: The only way to detect anonymous types right now.
+            return Attribute.IsDefined(type, typeof(CompilerGeneratedAttribute), false)
+                   && type.Name.Contains("AnonymousType")
+                   && (type.Name.StartsWith("<>") || type.Name.StartsWith("VB$"))
+                   && (type.Attributes & TypeAttributes.NotPublic) == TypeAttributes.NotPublic;
+        }
+
+        private static string csharpNameOrNull(Type type)
+        {
+            var map = new Dictionary<Type, string>
+                          {
+                              {typeof (bool), "bool"},
+                              {typeof (byte), "byte"},
+                              {typeof (sbyte), "sbyte"},
+                              {typeof (char), "char"},
+                              {typeof (decimal), "decimal"},
+                              {typeof (double), "double"},
+                              {typeof (float), "float"},
+                              {typeof (int), "int"},
+                              {typeof (uint), "uint"},
+                              {typeof (long), "long"},
+                              {typeof (ulong), "ulong"},
+                              {typeof (object), "object"},
+                              {typeof (short), "short"},
+                              {typeof (ushort), "ushort"},
+                              {typeof (string), "string"},
+                              {typeof (void), "void"}
+                          };
+
+            string shortName;
+            map.TryGetValue(type, out shortName);
+            return shortName;
         }
 
         public static string GetPrettyName(this StackFrame frame)
