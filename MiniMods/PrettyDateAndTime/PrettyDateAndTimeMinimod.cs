@@ -1,15 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Reflection;
-using System.Runtime.CompilerServices;
-using System.Text;
-using Minimod.PrettyPrint;
 
 namespace Minimod.PrettyDateAndTime
 {
     /// <summary>
-    /// Minimod.PrettyDateAndTimeMinimod, Version 0.8.0
+    /// Minimod.PrettyDateAndTimeMinimod, Version 0.8.1
     /// <para>Formats DateTime, DateTimeOffset and TimeSpan in a very readable manner.</para>
     /// </summary>
     /// <remarks>
