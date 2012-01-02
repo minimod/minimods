@@ -4,28 +4,28 @@ using System.Linq;
 using System.Reactive;
 using System.Reactive.Linq;
 
-namespace Minimod.RxEventSourcing
+namespace Minimod.RxEventRepository
 {
     /// <summary>
-    /// Minimod.RxEventSourcing, Version 0.0.1
+    /// Minimod.RxEventRepository, Version 0.0.1
     /// <para>A minimod for persisting event messages using Rx.</para>
     /// </summary>
     /// <remarks>
     /// Licensed under the Apache License, Version 2.0; you may not use this file except in compliance with the License.
     /// http://www.apache.org/licenses/LICENSE-2.0
     /// </remarks>
-    public class RxEventSourcingMinimod
+    public class RxEventRepositoryMinimod
     {
         private readonly TimeSpan _bufferTime;
         private readonly int _bufferCount;
 
-        public RxEventSourcingMinimod()
+        public RxEventRepositoryMinimod()
             : this(TimeSpan.FromSeconds(10), 100)
         {
 
         }
 
-        public RxEventSourcingMinimod(TimeSpan bufferTime, int bufferCount)
+        public RxEventRepositoryMinimod(TimeSpan bufferTime, int bufferCount)
         {
             _bufferTime = bufferTime;
             _bufferCount = bufferCount;

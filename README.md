@@ -19,8 +19,11 @@ A Minimod must
 
  * must consist of one file,
  * be single-purpose,
- * be in it’s own namespace
- * expose dependies to frameworks outside .NET BCL or other Minimods in its name
+ * be in it’s own namespace,
+ * expose dependies to frameworks outside .NET BCL or other Minimods in its name,
+ * be separately versioned. 
+
+We suggest to release Minimods under the Terms of the Apache License 2.0.
 
 ### Examples
 

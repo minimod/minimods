@@ -1,0 +1,33 @@
+<ProjectConfiguration>
+  <CopyReferencedAssembliesToWorkspace>false</CopyReferencedAssembliesToWorkspace>
+  <RunPreBuildEvents>false</RunPreBuildEvents>
+  <RunPostBuildEvents>false</RunPostBuildEvents>
+  <PreviouslyBuiltSuccessfully>true</PreviouslyBuiltSuccessfully>
+  <InstrumentAssembly>true</InstrumentAssembly>
+  <BuildOutputPath></BuildOutputPath>
+  <DefaultTestTimeout>60000</DefaultTestTimeout>
+  <UseBuildConfiguration></UseBuildConfiguration>
+  <IgnoredTests>
+    <RegexTestSelector>
+      <RegularExpression>Minimod\.FluentGenerics\.FluentGenericsMinimodTests\..*</RegularExpression>
+    </RegexTestSelector>
+    <RegexTestSelector>
+      <RegularExpression>Minimod\.Linq2Dictionary\.Linq2DictionaryTests\..*</RegularExpression>
+    </RegexTestSelector>
+    <RegexTestSelector>
+      <RegularExpression>Minimod\.PrettyPrint\.PrettyPrintMinimodTests\..*</RegularExpression>
+    </RegexTestSelector>
+    <RegexTestSelector>
+      <RegularExpression>Minimod\.PrettyText\.PrettyTextMinimodTests\..*</RegularExpression>
+    </RegexTestSelector>
+    <RegexTestSelector>
+      <RegularExpression>Minimod\.PrettyTypeSignatures\.PrettyTypeSignaturesTests\..*</RegularExpression>
+    </RegexTestSelector>
+    <RegexTestSelector>
+      <RegularExpression>Minimod\.ThreadVariable\.ThreadVariableTest\..*</RegularExpression>
+    </RegexTestSelector>
+    <NamedTestSelector>
+      <TestName>Minimod.EventSourcing.when_creating_a_person_with_valid_name.should_apply_person_created_event_with_expected_person_id</TestName>
+    </NamedTestSelector>
+  </IgnoredTests>
+</ProjectConfiguration>

@@ -1,3 +1,183 @@
+﻿<<<<<<< HEAD
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{04411979-C34B-4849-AC57-10B32F0F64B1}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Minimod</RootNamespace>
+    <AssemblyName>Minimods</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <CodeContractsAssemblyMode>0</CodeContractsAssemblyMode>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <CodeContractsEnableRuntimeChecking>True</CodeContractsEnableRuntimeChecking>
+    <CodeContractsRuntimeOnlyPublicSurface>False</CodeContractsRuntimeOnlyPublicSurface>
+    <CodeContractsRuntimeThrowOnFailure>True</CodeContractsRuntimeThrowOnFailure>
+    <CodeContractsRuntimeCallSiteRequires>False</CodeContractsRuntimeCallSiteRequires>
+    <CodeContractsRuntimeSkipQuantifiers>False</CodeContractsRuntimeSkipQuantifiers>
+    <CodeContractsRunCodeAnalysis>False</CodeContractsRunCodeAnalysis>
+    <CodeContractsNonNullObligations>False</CodeContractsNonNullObligations>
+    <CodeContractsBoundsObligations>False</CodeContractsBoundsObligations>
+    <CodeContractsArithmeticObligations>False</CodeContractsArithmeticObligations>
+    <CodeContractsEnumObligations>False</CodeContractsEnumObligations>
+    <CodeContractsRedundantAssumptions>False</CodeContractsRedundantAssumptions>
+    <CodeContractsRunInBackground>True</CodeContractsRunInBackground>
+    <CodeContractsShowSquigglies>False</CodeContractsShowSquigglies>
+    <CodeContractsUseBaseLine>False</CodeContractsUseBaseLine>
+    <CodeContractsEmitXMLDocs>True</CodeContractsEmitXMLDocs>
+    <CodeContractsCustomRewriterAssembly />
+    <CodeContractsCustomRewriterClass />
+    <CodeContractsLibPaths />
+    <CodeContractsExtraRewriteOptions />
+    <CodeContractsExtraAnalysisOptions />
+    <CodeContractsBaseLineFile />
+    <CodeContractsCacheAnalysisResults>False</CodeContractsCacheAnalysisResults>
+    <CodeContractsRuntimeCheckingLevel>Full</CodeContractsRuntimeCheckingLevel>
+    <CodeContractsReferenceAssembly>Build</CodeContractsReferenceAssembly>
+    <CodeContractsAnalysisWarningLevel>0</CodeContractsAnalysisWarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="clrzmq">
+      <HintPath>..\packages\clrzmq2.2.0.10.2010112000\lib\clrzmq.dll</HintPath>
+    </Reference>
+    <Reference Include="Machine.Specifications">
+      <HintPath>..\packages\Machine.Specifications.0.4.23.0\lib\Machine.Specifications.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\packages\Newtonsoft.Json.4.0.2\lib\net40\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="nunit.framework">
+      <HintPath>..\packages\NUnit.2.5.10.11092\lib\nunit.framework.dll</HintPath>
+    </Reference>
+    <Reference Include="nunit.mocks">
+      <HintPath>..\packages\NUnit.2.5.10.11092\lib\nunit.mocks.dll</HintPath>
+    </Reference>
+    <Reference Include="pnunit.framework">
+      <HintPath>..\packages\NUnit.2.5.10.11092\lib\pnunit.framework.dll</HintPath>
+    </Reference>
+    <Reference Include="PresentationCore" />
+    <Reference Include="SharpTestsEx">
+      <HintPath>..\packages\SharpTestsEx.1.1.1\lib\SharpTestsEx.dll</HintPath>
+    </Reference>
+    <Reference Include="SharpTestsEx.Mvc">
+      <HintPath>..\packages\SharpTestsEx.1.1.1\lib\SharpTestsEx.Mvc.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Reactive">
+      <HintPath>..\packages\Rx-Main.1.0.10621\lib\Net4\System.Reactive.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="EventSourcing\FunctionalExtentions.cs" />
+    <Compile Include="EventSourcing\given_a_created_person.cs">
+      <DependentUpon>EventSource.cs</DependentUpon>
+    </Compile>
+    <Compile Include="EventSourcing\MSpecIAggregateRootExtentions.cs" />
+    <Compile Include="EventSourcing\Sample\Person.cs" />
+    <Compile Include="EventSourcing\Sample\PersonCreated.cs" />
+    <Compile Include="EventSourcing\Sample\PersonNameChanged.cs" />
+    <Compile Include="EventSourcing\when_creating_a_person.cs">
+      <DependentUpon>EventSource.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FluentGenerics\FluentGenericsMinimod.cs" />
+    <Compile Include="FluentGenerics\FluentGenericsMinimodTests.cs" />
+    <Compile Include="JoinStrings\JoinStringsMinimod.cs" />
+    <Compile Include="JoinStrings\JoinStringsMinimodTests.cs" />
+    <Compile Include="Linq2Dictionary\Linq2DictionaryMinimod.cs" />
+    <Compile Include="Linq2Dictionary\Linq2DictionaryTests.cs" />
+    <Compile Include="Flattener\FlattenerMinimod.cs" />
+    <Compile Include="NestedDictionary\NestedDictionaryMinimod.cs" />
+    <Compile Include="PrettyDateAndTime\PrettyDataAndTimeMinimodTests.cs" />
+    <Compile Include="PrettyDateAndTime\PrettyDateAndTimeMinimod.cs" />
+    <Compile Include="PrettyPrint\PrettyPrintMinimod.cs" />
+    <Compile Include="PrettyPrint\PrettyPrintMinimodTests.cs" />
+    <Compile Include="PrettyText\PrettyTextMinimodTests.cs" />
+    <Compile Include="PrettyTypeSignatures\ClassA.cs" />
+    <Compile Include="PrettyTypeSignatures\ClassX.cs" />
+    <Compile Include="PrettyTypeSignatures\PrettyTextMinimodTests.cs" />
+    <Compile Include="PrettyText\PrettyTextMinimod.cs" />
+    <Compile Include="PrettyTypeSignatures\PrettyTypeSignaturesMinimod.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="MVVM\MVVMMinimod.cs" />
+    <Compile Include="EventSourcing\EventSource.cs" />
+    <Compile Include="EventSourcing\RxEventSourcingMinimod.cs" />
+    <Compile Include="RxMessageBroker\RxMessageBrokerMinimod.cs" />
+    <Compile Include="ThreadVariable\RealWorldExample.cs" />
+    <Compile Include="ThreadVariable\TestHelper.cs" />
+    <Compile Include="ThreadVariable\ThreadVariable.cs" />
+    <Compile Include="ThreadVariable\ThreadVariableTest.cs" />
+    <Compile Include="ZeroMQMessageBus\ZeroMQMessageBusMinimod.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="FluentGenerics\FluentGenericsMinimod.nuspec">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="JoinStrings\JoinStringsMinimod.nuspec">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Linq2Dictionary\Linq2DictionaryMinimod.nuspec">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Flattener\FlattenerMinimod.nuspec" />
+    <None Include="NestedDictionary\NestedDictionaryMinimod.nuspec">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="packages.config">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="PrettyPrint\PrettyPrintMinimod.nuspec">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="PrettyText\PrettyTextMinimod.nuspec">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="PrettyTypeSignatures\PrettyTypeSignaturesMinimod.nuspec">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="MVVM\MVVMMinimod.nuspec" />
+    <None Include="EventSourcing\RxEventSourcingMinimod.nuspec" />
+    <None Include="RxMessageBroker\RxMessageBrokerMinimod.nuspec" />
+    <None Include="ThreadVariable\Minimod.ThreadVariable.0.9.nupkg" />
+    <None Include="ThreadVariable\ThreadVariableMinimod.nuspec" />
+    <None Include="ZeroMQMessageBus\ZeroMQMessageBusMinimod.nuspec" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+=======
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
@@ -32,10 +212,10 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="clrzmq">
-      <HintPath>..\packages\clrzmq2.2.0.10.2010112000\lib\clrzmq.dll</HintPath>
+      <HintPath>..\packages\clrzmq2.2.1.0.2011100900\lib\clrzmq.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json">
-      <HintPath>..\packages\Newtonsoft.Json.4.0.2\lib\net40\Newtonsoft.Json.dll</HintPath>
+      <HintPath>..\packages\Newtonsoft.Json.4.0.3\lib\net40\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="nunit.framework">
       <HintPath>..\packages\NUnit.2.5.10.11092\lib\nunit.framework.dll</HintPath>
@@ -58,7 +238,6 @@
     <Reference Include="System.Reactive">
       <HintPath>..\packages\Rx-Main.1.0.10621\lib\Net4\System.Reactive.dll</HintPath>
     </Reference>
-    <Reference Include="System.Web" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -66,16 +245,17 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Continuation\ContinuationMinimod.cs" />
     <Compile Include="FluentGenerics\FluentGenericsMinimod.cs" />
     <Compile Include="FluentGenerics\FluentGenericsMinimodTests.cs" />
+    <Compile Include="Impersonator\ImpersonatorMinimod.cs" />
     <Compile Include="JoinStrings\JoinStringsMinimod.cs" />
     <Compile Include="JoinStrings\JoinStringsMinimodTests.cs" />
     <Compile Include="Linq2Dictionary\Linq2DictionaryMinimod.cs" />
     <Compile Include="Linq2Dictionary\Linq2DictionaryTests.cs" />
     <Compile Include="Flattener\FlattenerMinimod.cs" />
     <Compile Include="NestedDictionary\NestedDictionaryMinimod.cs" />
-    <Compile Include="PrettyDateAndTime\PrettyDataAndTimeMinimodTests.cs" />
-    <Compile Include="PrettyDateAndTime\PrettyDateAndTimeMinimod.cs" />
+    <Compile Include="PatternMatching\PatternMatchingMinimod.cs" />
     <Compile Include="PrettyPrint\PrettyPrintMinimod.cs" />
     <Compile Include="PrettyPrint\PrettyPrintMinimodTests.cs" />
     <Compile Include="PrettyText\PrettyTextMinimodTests.cs" />
@@ -86,8 +266,8 @@
     <Compile Include="PrettyTypeSignatures\PrettyTypeSignaturesMinimod.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="MVVM\MVVMMinimod.cs" />
-    <Compile Include="RxEventSourcing\RxEventSourcingMinimod.cs" />
-    <Compile Include="RxEventSourcing\RxEventSourcingMinimodSamples.cs" />
+    <Compile Include="RxEventRepository\RxEventRepositoryMinimod.cs" />
+    <Compile Include="RxEventRepository\RxEventRepositoryMinimodSamples.cs" />
     <Compile Include="RxMessageBroker\RxMessageBrokerMinimod.cs" />
     <Compile Include="ThreadVariable\RealWorldExample.cs" />
     <Compile Include="ThreadVariable\TestHelper.cs" />
@@ -96,9 +276,11 @@
     <Compile Include="ZeroMQMessageBus\ZeroMQMessageBusMinimod.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Continuation\ContinuationMinimod.nuspec" />
     <None Include="FluentGenerics\FluentGenericsMinimod.nuspec">
       <SubType>Designer</SubType>
     </None>
+    <None Include="Impersonator\ImpersonatorMinimod.nuspec" />
     <None Include="JoinStrings\JoinStringsMinimod.nuspec">
       <SubType>Designer</SubType>
     </None>
@@ -112,9 +294,7 @@
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>
-    <None Include="PrettyDateAndTime\PrettyDateAndTimeMinimod.nuspec">
-      <SubType>Designer</SubType>
-    </None>
+    <None Include="PatternMatching\PatternMatchingMinimod.nuspec" />
     <None Include="PrettyPrint\PrettyPrintMinimod.nuspec">
       <SubType>Designer</SubType>
     </None>
@@ -125,7 +305,7 @@
       <SubType>Designer</SubType>
     </None>
     <None Include="MVVM\MVVMMinimod.nuspec" />
-    <None Include="RxEventSourcing\RxEventSourcingMinimod.nuspec" />
+    <None Include="RxEventRepository\RxEventRepositoryMinimod.nuspec" />
     <None Include="RxMessageBroker\RxMessageBrokerMinimod.nuspec" />
     <None Include="ThreadVariable\Minimod.ThreadVariable.0.9.nupkg" />
     <None Include="ThreadVariable\ThreadVariableMinimod.nuspec" />
@@ -134,7 +314,11 @@
   <ItemGroup>
     <WebReferences Include="Web References\" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <None Include="libzmq.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
@@ -143,4 +327,5 @@
   <Target Name="AfterBuild">
   </Target>
   -->
+>>>>>>> b0450b4d44ceb293eceadc406bcf25326c862247
 </Project>
