@@ -33,3 +33,7 @@ _ReSharper*/
 target
 #Include files
 !NuGet.exe
+
+*.crunchsolution.local.xml
+*.crunchproject.local.xml
+*.dotCover
