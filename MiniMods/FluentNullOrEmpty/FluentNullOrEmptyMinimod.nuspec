@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+  <metadata>
+    <id>Minimod.FluentNullOrEmpty</id>
+    <version>0.9.1</version>
+    <authors>Lars Corneliussen</authors>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <licenseUrl>http://www.apache.org/licenses/LICENSE-2.0</licenseUrl>
+    <tags>minimod</tags>
+    <description>
+      A minimod for fluently checking if strings 
+      or collections are either null and/or empty.
+    </description>
+  </metadata>
+  <files>
+    <file src="FluentNullOrEmptyMinimod.cs" 
+          target="content\Minimods\Minimod.FluentNullOrEmpty.Generated.cs" />
+  </files>
+</package>

@@ -93,6 +93,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Continuation\ContinuationMinimod.cs" />
+    <Compile Include="FluentNullOrEmpty\FluentNullOrEmptyMinimod.cs" />
     <Compile Include="EventSourcing\FunctionalExtentions.cs" />
     <Compile Include="EventSourcing\given_a_created_person.cs">
       <DependentUpon>EventSource.cs</DependentUpon>
@@ -106,6 +107,7 @@
     </Compile>
     <Compile Include="FluentGenerics\FluentGenericsMinimod.cs" />
     <Compile Include="FluentGenerics\FluentGenericsMinimodTests.cs" />
+    <Compile Include="FluentNullOrEmpty\FluentNullOrEmptyMinimodTests.cs" />
     <Compile Include="Impersonator\ImpersonatorMinimod.cs" />
     <Compile Include="JoinStrings\JoinStringsMinimod.cs" />
     <Compile Include="JoinStrings\JoinStringsMinimodTests.cs" />
@@ -139,6 +141,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Continuation\ContinuationMinimod.nuspec" />
+    <None Include="FluentNullOrEmpty\FluentNullOrEmptyMinimod.nuspec" />
     <None Include="FluentGenerics\FluentGenericsMinimod.nuspec">
       <SubType>Designer</SubType>
     </None>
