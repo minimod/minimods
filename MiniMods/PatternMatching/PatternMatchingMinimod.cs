@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Minimod.PatternMatching
 {
@@ -17,13 +18,13 @@ namespace Minimod.PatternMatching
     }
     public class PatternMatch<T, TResult>
     {
-        private readonly T value;
+        private readonly T _value;
         private readonly List<Tuple<Func<T, bool>, Func<T, TResult>>> _cases = new List<Tuple<Func<T, bool>, Func<T, TResult>>>();
-        private Func<T, TResult> elseFunc;
+        private Func<T, TResult> _elseFunc;
 
         internal PatternMatch(T value)
         {
-            this.value = value;
+            _value = value;
         }
 
         public PatternMatch<T, TResult> With(Func<T, bool> condition, Func<T, TResult> result)
@@ -42,23 +43,21 @@ namespace Minimod.PatternMatching
 
         public PatternMatch<T, TResult> Else(Func<T, TResult> result)
         {
-            if (elseFunc != null)
-                throw new InvalidOperationException("Cannot have multiple else cases");
+            if (_elseFunc != null)
+                throw new InvalidOperationException("Cannot have multiple else cases.");
 
-            elseFunc = result;
+            _elseFunc = result;
             return this;
         }
 
         public TResult Do()
         {
-            if (elseFunc != null)
-                _cases.Add(
-                    Tuple.Create<Func<T, bool>, Func<T, TResult>>(x => true, elseFunc));
-            foreach (var item in _cases)
-                if (item.Item1(value))
-                    return item.Item2(value);
+            if (_elseFunc != null)
+                _cases.Add(Tuple.Create<Func<T, bool>, Func<T, TResult>>(x => true, _elseFunc));
+            foreach (var item in _cases.Where(item => item.Item1(_value)))
+                return item.Item2(_value);
 
-            throw new MatchNotFoundException("Incomplete pattern match");
+            throw new MatchNotFoundException("Incomplete pattern match.");
         }
     }
 
@@ -81,7 +80,6 @@ namespace Minimod.PatternMatching
             var match = new PatternMatch<T, TResult>(_value);
             return match.With(condition, result);
         }
-
     }
 
     public static class PatternMatchExtensions

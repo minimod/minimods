@@ -127,7 +127,7 @@ namespace Minimod.MVVM
 
     public interface ICommandHandler<in T>
     {
-        void Execute(T ClearChatMessagesUiCommand);
+        void Execute(T commandMessage);
     }
 
     public interface IEventHandler<in T>
