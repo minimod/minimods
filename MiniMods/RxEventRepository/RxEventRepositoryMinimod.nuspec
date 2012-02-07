@@ -8,11 +8,11 @@
     <licenseUrl>http://www.apache.org/licenses/LICENSE-2.0</licenseUrl>
     <tags>minimod</tags>
     <description xml:space="preserve">A minimod for persisting event messages using Rx.</description>
+    <dependencies>
+      <dependency id="Minimod.RxMessageBroker" version="0.0.1" />
+    </dependencies>
   </metadata>
   <files>
     <file src="RxEventRepositoryMinimod.cs" target="content\Minimods\Minimod.RxEventRepository.Generated.cs" />
   </files>
-  <dependencies>
-    <dependency id="Minimod.RxMessageBroker" version="0.0.1" />
-  </dependencies>
 </package>

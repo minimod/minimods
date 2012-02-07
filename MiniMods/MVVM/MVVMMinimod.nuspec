@@ -1,21 +1,22 @@
-﻿<?xml version="1.0" encoding="utf-8" ?>
+<?xml version="1.0"?>
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
   <metadata>
-    <id>Minimod.MVVM</id>
     <version>0.0.1</version>
     <authors>Mike Bild</authors>
-    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <owners>Mike Bild</owners>
     <licenseUrl>http://www.apache.org/licenses/LICENSE-2.0</licenseUrl>
+    <dependencies>
+      <dependency id="Minimod.RxMessageBroker" />
+    </dependencies>
+    <frameworkAssemblies>
+      <frameworkAssembly assemblyName="PresentationCore" targetFramework="" />
+    </frameworkAssemblies>
+    <id>Minimod.MVVM</id>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>A small reactive message based MVVM.</description>
     <tags>minimod</tags>
-    <description xml:space="preserve">A small reactive message based MVVM.</description>
   </metadata>
   <files>
     <file src="MVVMMinimod.cs" target="content\Minimods\Minimod.MVVM.Generated.cs" />
   </files>
-  <dependencies>
-    <dependency id="Minimod.RxMessageBroker" version="0.0.1" />    
-  </dependencies>
-  <frameworkAssemblies>
-    <frameworkAssembly assemblyName="PresentationCore" />    
-  </frameworkAssemblies>
 </package>
