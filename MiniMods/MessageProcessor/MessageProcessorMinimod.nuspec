@@ -1,0 +1,19 @@
+﻿<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+  <metadata>
+    <version>0.0.1</version>
+    <authors>Mike Bild</authors>
+    <owners>Mike Bild</owners>
+    <licenseUrl>http://www.apache.org/licenses/LICENSE-2.0</licenseUrl>
+    <dependencies>
+      <dependency id="Rx_Experimental-Main" />
+    </dependencies>
+    <id>Minimod.MessageProcessor</id>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>A Processor for messages based on Rx.</description>
+    <tags>minimod</tags>
+  </metadata>
+  <files>
+    <file src="MessageProcessorMinimod.cs" target="content\Minimods\Minimod.MessageProcessor.Generated.cs" />
+  </files>
+</package>

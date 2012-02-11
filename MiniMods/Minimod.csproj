@@ -93,6 +93,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Continuation\ContinuationMinimod.cs" />
+    <Compile Include="MessageProcessor\MessageProcessorMinimod.cs" />
     <Compile Include="FluentNullOrEmpty\FluentNullOrEmptyMinimod.cs" />
     <Compile Include="EventSourcing\FunctionalExtentions.cs" />
     <Compile Include="EventSourcing\given_a_created_person.cs">
@@ -114,6 +115,7 @@
     <Compile Include="Linq2Dictionary\Linq2DictionaryMinimod.cs" />
     <Compile Include="Linq2Dictionary\Linq2DictionaryTests.cs" />
     <Compile Include="Flattener\FlattenerMinimod.cs" />
+    <Compile Include="MessageProcessor\MessageProcessorSamples.cs" />
     <Compile Include="NestedDictionary\NestedDictionaryMinimod.cs" />
     <Compile Include="PatternMatching\PatternMatchingMinimod.cs" />
     <Compile Include="PrettyDateAndTime\PrettyDataAndTimeMinimodTests.cs" />
@@ -141,6 +143,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Continuation\ContinuationMinimod.nuspec" />
+    <None Include="MessageProcessor\MessageProcessorMinimod.nuspec" />
     <None Include="FluentNullOrEmpty\FluentNullOrEmptyMinimod.nuspec" />
     <None Include="FluentGenerics\FluentGenericsMinimod.nuspec">
       <SubType>Designer</SubType>
