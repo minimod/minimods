@@ -27,7 +27,7 @@ namespace Minimod.MessageProcessor
     public abstract class MessageProcessor
     {
         readonly Subject<object> _subject = new Subject<object>();
-        protected void On<T>(Func<IObservable<T>, IObservable<T>> action)
+        protected void OnReceive<T>(Func<IObservable<T>, IObservable<T>> action)
         {
             action(_subject.OfType<T>()).Subscribe();
         }
@@ -72,7 +72,7 @@ namespace Minimod.MessageProcessor
         public ErrorProcessor()
             : base(MessageStream.GetMain())
         {
-            On<ErrorMessage>(messages => messages.Do(message => Debug.WriteLine(message.Exception.Message + " : " + message.Message)));
+            OnReceive<ErrorMessage>(messages => messages.Do(message => Debug.WriteLine(message.Exception.Message + " : " + message.Message)));
         }
     }
 

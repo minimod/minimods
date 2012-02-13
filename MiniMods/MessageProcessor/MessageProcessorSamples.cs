@@ -19,12 +19,12 @@ namespace Minimod.MessageProcessor
             public MyMessageProcessor()
                 : base(MessageStream.GetMain())
             {
-                On<MyMessage>(messages => messages
+                OnReceive<MyMessage>(messages => messages
                                               .Where(message => message.IsSecond)
                                               .Do(
                                                   message => TryCatch(Log(Log(Log(Log<MyMessage>(WhenIsSecond)))))(message)));
 
-                On<MyMessage>(messages => messages
+                OnReceive<MyMessage>(messages => messages
                                               .Where(message => message.IsFirst)
                                               .Do(message => TryCatch(Log<MyMessage>(WhenIsFirst))(message)));
             }
