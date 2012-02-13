@@ -1,6 +1,12 @@
 # Welcome to Minimod.MessageProcessor
 
-**«It's message based processing like actors or a new pattern [M]essage, [V]iew or [V]alue, [Processor] ;-) and was inpired from Grand Central Dispatch and Ayendes blog post.»**
+**«It's message based data und single thread processing like an actor model with a new name [M]essage, [V]iew/[V]alue, [Processor] ;-) and was inpired from Grand Central Dispatch and Ayendes blog post for processor abstraction.»**
+
+TODO:
+* cut of Silverlight XAML implementations (nuget packaging by target framework?)
+* more tests :-(
+* more samples
+
 
 
 [1]: http://startbigthinksmall.wordpress.com/2011/07/05/reuse-reuse-reuse-do-we-need-utility-libraries-if-not-whats-next-minimods/
