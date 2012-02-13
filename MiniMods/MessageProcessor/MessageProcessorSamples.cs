@@ -17,12 +17,12 @@ namespace Minimod.MessageProcessor
         public class MyMessageProcessor : MessageProcessor
         {
             public MyMessageProcessor()
+                : base(MessageStream.GetMain())
             {
                 On<MyMessage>(messages => messages
                                               .Where(message => message.IsSecond)
                                               .Do(
-                                                  message =>
-                                                  TryCatch(Log(Log(Log(Log<MyMessage>(WhenIsSecond)))))(message)));
+                                                  message => TryCatch(Log(Log(Log(Log<MyMessage>(WhenIsSecond)))))(message)));
 
                 On<MyMessage>(messages => messages
                                               .Where(message => message.IsFirst)
@@ -52,17 +52,15 @@ namespace Minimod.MessageProcessor
                 return Unit.Default;
             }
         }
-        
+
         public void Sample()
         {
-            new MyErrorHandler()
-                .Connect(MessageStream.Instance.Messages);
-            new MyMessageProcessor()
-                .Connect(MessageStream.Instance.Messages);
+            new ErrorProcessor();
+            new MyMessageProcessor();
 
             Observable
                 .Generate(0, x => x < 100, x => x + 1, x => new MyMessage { IsFirst = x % 2 == 0, IsSecond = x % 2 != 0, Reason = x.ToString() })
-                .Subscribe(x => MessageStream.Instance.Send(x));
+                .Subscribe(x => MessageStream.GetMain().Send(x));
         }
 
     }

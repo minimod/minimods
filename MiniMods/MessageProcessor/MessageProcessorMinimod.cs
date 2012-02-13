@@ -1,13 +1,16 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Diagnostics;
+using System.Linq;
 using System.Reactive;
+using System.Reactive.Concurrency;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
 
 namespace Minimod.MessageProcessor
 {
     /// <summary>
-    /// Minimod.MessageProcessor, Version 0.0.1
+    /// Minimod.MessageProcessor, Version 0.0.2
     /// <para>A processor for messages.</para>
     /// </summary>
     /// <remarks>
@@ -20,21 +23,22 @@ namespace Minimod.MessageProcessor
         public IMessage Message { get; set; }
         public Exception Exception { get; set; }
     }
+
     public abstract class MessageProcessor
     {
         readonly Subject<object> _subject = new Subject<object>();
-
         protected void On<T>(Func<IObservable<T>, IObservable<T>> action)
         {
-            action(_subject.OfType<T>())
-                .Subscribe();
+            action(_subject.OfType<T>()).Subscribe();
         }
-        public void Connect(IObservable<object> observable)
+
+        protected MessageProcessor(IObservable<object> messages)
         {
-            observable
+            messages
                 .Multicast(_subject)
                 .Connect();
         }
+
         protected Func<T, Unit> Log<T>(Func<T, Unit> next)
         {
             return _ =>
@@ -57,30 +61,84 @@ namespace Minimod.MessageProcessor
                 catch (Exception error)
                 {
                     Debug.WriteLine(error.Message);
-                    MessageStream.Instance.Send(new ErrorMessage { Message = message as IMessage, Exception = error });
+                    MessageStream.GetMain().Send(new ErrorMessage { Message = message as IMessage, Exception = error });
                 }
                 return result;
             };
         }
     }
-    public class MyErrorHandler : MessageProcessor
+    public class ErrorProcessor : MessageProcessor
     {
-        public MyErrorHandler()
+        public ErrorProcessor()
+            : base(MessageStream.GetMain())
         {
             On<ErrorMessage>(messages => messages.Do(message => Debug.WriteLine(message.Exception.Message + " : " + message.Message)));
         }
     }
-    public sealed class MessageStream
+
+    public interface IMessageStream
     {
-        static readonly MessageStream _instance = new MessageStream();
-        public static MessageStream Instance { get { return _instance; } }
-        static MessageStream() { }
+        void Send<T>(T value) where T : IMessage;
+    }
+    public sealed class MessageStream : IObservable<IMessage>, IMessageStream
+    {
+        readonly string _name;
+        readonly IScheduler _scheduler;
         readonly Subject<IMessage> _messageStream = new Subject<IMessage>();
-        public IObservable<IMessage> Messages { get { return _messageStream; } }
+
+        MessageStream(string name, IScheduler scheduler)
+        {
+            _name = name;
+            _scheduler = scheduler;
+        }
+
         public void Send<T>(T value) where T : IMessage
         {
-            _messageStream
-                .OnNext(value);
+            var currentStream = MessageStreams.Single(x => x.Key == _name);
+            _scheduler.Schedule(() => currentStream
+                                      .Value
+                                      ._messageStream
+                                      .OnNext(value));
+        }
+
+        static readonly ConcurrentDictionary<string, MessageStream> MessageStreams = new ConcurrentDictionary<string, MessageStream>();
+        public IDisposable Subscribe(IObserver<IMessage> observer)
+        {
+            return _messageStream.Subscribe(observer);
+        }
+
+        public static MessageStream CreateLabeled(string name, IScheduler scheduler)
+        {
+            MessageStream result = null;
+            MessageStreams.TryGetValue(name, out result);
+            if (result == null)
+            {
+                result = new MessageStream(name, scheduler);
+                MessageStreams.TryAdd(name, result);
+            }
+            return result;
+        }
+        public static MessageStream GetSerial(string name)
+        {
+            return CreateLabeled(name, new EventLoopScheduler());
+        }
+        public static MessageStream GetConcurrent(string name)
+        {
+#if SILVERLIGHT
+            return CreateLabeled(name, Scheduler.ThreadPool);
+#endif
+            return CreateLabeled(name, Scheduler.TaskPool); //sorry SL4 Rx API is lame -> no Scheduler.TaskPool defined
+        }
+        public static MessageStream GetMain()
+        {
+#if SILVERLIGHT
+            return CreateLabeled("main", DispatcherScheduler.Instance); //install-package rx-xaml
+#endif
+            return CreateLabeled("main", Scheduler.CurrentThread);
+        }
+        public static MessageStream GetGlobal()
+        {
+            return CreateLabeled("global", new EventLoopScheduler());
         }
     }
 }
