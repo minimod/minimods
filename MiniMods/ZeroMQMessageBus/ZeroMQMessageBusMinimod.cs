@@ -1,87 +1,103 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Dynamic;
+using System.Linq;
 using System.Reactive.Concurrency;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using System.Text;
-using System.Threading;
 using Newtonsoft.Json;
-using ZMQ;
+using ZeroMQ;
 
-namespace Minimod.ZeroMQMessageBus
+namespace ConsoleApplication1.Minimods
 {
     /// <summary>
-    /// Minimod.ZeroMQMessageBus, Version 0.0.1
+    /// Minimod.ZeroMqMessageStream, Version 0.0.1
     /// <para>A minimod for messaging using ZeroMQ, Json and Rx.</para>
     /// </summary>
     /// <remarks>
     /// Licensed under the Apache License, Version 2.0; you may not use this file except in compliance with the License.
     /// http://www.apache.org/licenses/LICENSE-2.0
     /// </remarks>
-    public class ZeroMQMessageBusMinimod : IDisposable
+    public class ZeroMqMessageStream : IDisposable
     {
-        private readonly Context _subContext;
-        private readonly Context _pubContext;
-        private readonly Socket _subSocket;
-        private readonly Socket _pubSocket;
         private readonly Subject<object> _stream;
         private IDisposable _subscription;
         private readonly Guid _correlationId;
 
-        private static ZeroMQMessageBusMinimod _defaultInstance;
-        public static ZeroMQMessageBusMinimod Default { get { return _defaultInstance ?? (_defaultInstance = new ZeroMQMessageBusMinimod()); } }
-        public static void OverrideDefault(ZeroMQMessageBusMinimod newMessenger) { _defaultInstance = newMessenger; }
-        public static void Reset() { _defaultInstance = null; }
-        public IObservable<object> Stream { get { return _stream; } }
+        private readonly ZmqContext _pubContext;
+        private readonly ZmqContext _subContext;
+        private readonly ZmqSocket _pubSocket;
+        private readonly ZmqSocket _subSocket;
+        private readonly IScheduler _scheduler;
 
-        public ZeroMQMessageBusMinimod()
+        public IObservable<object> Stream
         {
-            _correlationId = Guid.NewGuid();
-            _subContext = new Context(1);
-            _pubContext = new Context(1);
-            _stream = new Subject<object>();
-            _subSocket = _subContext.Socket(SocketType.SUB);
-            _pubSocket = _pubContext.Socket(SocketType.PUB);
-        }
-
-        public void Connect(string subsciptionAddress, string publishAddress)
-        {
-            _subSocket.Connect(subsciptionAddress);
-            _pubSocket.Connect(publishAddress);
-
-            _subSocket.Subscribe(String.Empty, Encoding.UTF8);
-
-            _subscription = Observable
-                .Interval(TimeSpan.FromMilliseconds(500))
-                .Subscribe(_ => _stream.OnNext(_subSocket.Recv(Encoding.UTF8)));
-
-        }
-
-        public IDisposable Register<T>(Action<T> action)
-        {
-            return Register(action, new SynchronizationContextScheduler(SynchronizationContext.Current));
-        }
-
-        public IDisposable Register<T>(Action<T> action, IScheduler scheduler)
-        {
-            return _stream
-                .Where(message => !message.ToString().Contains(_correlationId.ToString()))
-                .Select<object, dynamic>(jsonMessage => JsonConvert.DeserializeObject<ExpandoObject>(jsonMessage.ToString(), new Newtonsoft.Json.Converters.ExpandoObjectConverter()))                
-                .Select(message =>
-                            {
-                                try
+            get
+            {
+                return _stream
+                    .Select<object, dynamic>(jsonMessage => JsonConvert.DeserializeObject<ExpandoObject>(jsonMessage.ToString(), new Newtonsoft.Json.Converters.ExpandoObjectConverter()))
+                    .Select(message =>
                                 {
-                                    ((IDictionary<string, object>)message).Remove("CorrelationId");
-                                    ((IDictionary<string, object>)message).Remove("CorrelationTimeStamp");
-                                    var serializeObject = JsonConvert.SerializeObject(message);
-                                    return JsonConvert.DeserializeObject<T>(serializeObject, new JsonSerializerSettings() { MissingMemberHandling = MissingMemberHandling.Error });
-                                }
-                                catch { return message; }
-                            })
-                .OfType<T>()
-                .ObserveOn(scheduler)
-                .Subscribe(action);
+                                    try
+                                    {
+                                        ((IDictionary<string, object>)message).Remove("CorrelationId");
+                                        ((IDictionary<string, object>)message).Remove("CorrelationTimeStamp");
+                                        var serializeObject = JsonConvert.SerializeObject(message);
+                                        var newMessage = JsonConvert.DeserializeObject<DoWorkMessage>(serializeObject, new JsonSerializerSettings() { MissingMemberHandling = MissingMemberHandling.Error });
+                                        return newMessage;
+                                    }
+                                    catch
+                                    {
+                                        return message;
+                                    }
+                                });
+
+            }
+        }
+
+        public ZeroMqMessageStream()
+            : this(new EventLoopScheduler())
+        {
+
+        }
+
+        public ZeroMqMessageStream(IScheduler scheduler)
+        {
+            _scheduler = scheduler;
+            _stream = new Subject<object>();
+            _correlationId = Guid.NewGuid();
+            _pubContext = ZmqContext.Create();
+            _subContext = ZmqContext.Create();
+            _pubSocket = _pubContext.CreateSocket(SocketType.PUB);
+            _subSocket = _subContext.CreateSocket(SocketType.SUB);
+        }
+
+        public void Connect(string subsciptionAddress, string[] publishAddresses)
+        {
+            foreach (var publishAddress in publishAddresses)
+            {
+                _pubSocket.Connect(publishAddress);
+            }
+
+            _subSocket.Bind(subsciptionAddress);
+            _subSocket.Connect(subsciptionAddress);
+            _subSocket.SubscribeAll();
+
+            _subscription = _scheduler.Schedule(() =>
+                                    {
+                                        while (true)
+                                        {
+                                            var zmqMessage = _subSocket.ReceiveMessage();
+                                            if (zmqMessage.FrameCount >= 0 && zmqMessage.TotalSize > 1 && zmqMessage.IsComplete)
+                                            {
+                                                var message = Encoding.UTF8.GetString(zmqMessage.First());
+                                                _stream.OnNext(message);
+                                                Debug.WriteLine("Correlation ID: {0} - message received", _correlationId);
+                                            }
+                                        }
+                                    });
         }
 
         public void Send(dynamic value)
@@ -91,7 +107,8 @@ namespace Minimod.ZeroMQMessageBus
             deserializeObject.CorrelationTimeStamp = DateTime.Now;
             deserializeObject.CorrelationId = _correlationId.ToString();
             var message = JsonConvert.SerializeObject(deserializeObject);
-            _pubSocket.Send(message, Encoding.UTF8);
+            _pubSocket.SendFrame(new Frame(Encoding.UTF8.GetBytes(message)));
+            Debug.WriteLine("Correlation ID: {0} - message send", _correlationId);
         }
 
         public void Dispose()
@@ -101,6 +118,7 @@ namespace Minimod.ZeroMQMessageBus
             _pubSocket.Dispose();
             _subSocket.Dispose();
             _subContext.Dispose();
+            _pubContext.Dispose();
         }
     }
 }
