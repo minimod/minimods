@@ -10,7 +10,7 @@ using System.Text;
 using Newtonsoft.Json;
 using ZeroMQ;
 
-namespace ConsoleApplication1.Minimods
+namespace Minimod.ZeroMqMessageStream
 {
     /// <summary>
     /// Minimod.ZeroMqMessageStream, Version 0.0.1
@@ -45,8 +45,7 @@ namespace ConsoleApplication1.Minimods
                                         ((IDictionary<string, object>)message).Remove("CorrelationId");
                                         ((IDictionary<string, object>)message).Remove("CorrelationTimeStamp");
                                         var serializeObject = JsonConvert.SerializeObject(message);
-                                        var newMessage = JsonConvert.DeserializeObject<DoWorkMessage>(serializeObject, new JsonSerializerSettings() { MissingMemberHandling = MissingMemberHandling.Error });
-                                        return newMessage;
+                                        return JsonConvert.DeserializeObject<object>(serializeObject, new JsonSerializerSettings() { MissingMemberHandling = MissingMemberHandling.Error });
                                     }
                                     catch
                                     {

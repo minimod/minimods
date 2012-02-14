@@ -13,6 +13,8 @@
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <CodeContractsAssemblyMode>0</CodeContractsAssemblyMode>
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\minimods\</SolutionDir>
+    <RestorePackages>true</RestorePackages>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -57,8 +59,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="clrzmq">
-      <HintPath>..\packages\clrzmq2.2.0.10.2010112000\lib\clrzmq.dll</HintPath>
+    <Reference Include="clrzmq, Version=3.0.0.0, Culture=neutral, PublicKeyToken=ef95cdc29d237b0d, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\clrzmq.3.0.0-alpha1\lib\net40\clrzmq.dll</HintPath>
     </Reference>
     <Reference Include="Machine.Specifications">
       <HintPath>..\packages\Machine.Specifications.0.5.2.0\lib\Machine.Specifications.dll</HintPath>
@@ -139,7 +142,7 @@
     <Compile Include="ThreadVariable\TestHelper.cs" />
     <Compile Include="ThreadVariable\ThreadVariable.cs" />
     <Compile Include="ThreadVariable\ThreadVariableTest.cs" />
-    <Compile Include="ZeroMQMessageBus\ZeroMQMessageBusMinimod.cs" />
+    <Compile Include="ZeroMqMessageStream\ZeroMqMessageStreamMinimod.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Continuation\ContinuationMinimod.nuspec" />
@@ -178,9 +181,10 @@
     <None Include="RxMessageBroker\RxMessageBrokerMinimod.nuspec" />
     <None Include="ThreadVariable\Minimod.ThreadVariable.0.9.nupkg" />
     <None Include="ThreadVariable\ThreadVariableMinimod.nuspec" />
-    <None Include="ZeroMQMessageBus\ZeroMQMessageBusMinimod.nuspec" />
+    <None Include="ZeroMqMessageStream\ZeroMqMessageStreamMinimod.nuspec" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(SolutionDir)\.nuget\nuget.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
