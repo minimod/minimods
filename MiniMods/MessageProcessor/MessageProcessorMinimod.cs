@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.Linq;
@@ -10,7 +10,7 @@ using System.Reactive.Subjects;
 namespace Minimod.MessageProcessor
 {
     /// <summary>
-    /// Minimod.MessageProcessor, Version 0.0.2
+    /// Minimod.MessageProcessor, Version 0.0.4
     /// <para>A processor for messages.</para>
     /// </summary>
     /// <remarks>
@@ -26,13 +26,13 @@ namespace Minimod.MessageProcessor
 
     public abstract class MessageProcessor
     {
-        readonly Subject<object> _subject = new Subject<object>();
+        readonly Subject<IMessage> _subject = new Subject<IMessage>();
         protected void OnReceive<T>(Func<IObservable<T>, IObservable<T>> action)
         {
             action(_subject.OfType<T>()).Subscribe();
         }
 
-        protected MessageProcessor(IObservable<object> messages)
+        protected MessageProcessor(IObservable<IMessage> messages)
         {
             messages
                 .Multicast(_subject)
@@ -109,36 +109,26 @@ namespace Minimod.MessageProcessor
 
         public static MessageStream CreateLabeled(string name, IScheduler scheduler)
         {
-            MessageStream result = null;
-            MessageStreams.TryGetValue(name, out result);
-            if (result == null)
-            {
-                result = new MessageStream(name, scheduler);
-                MessageStreams.TryAdd(name, result);
-            }
-            return result;
+            return MessageStreams.GetOrAdd(name.ToLower(), value => new MessageStream(value, scheduler));
         }
-        public static MessageStream GetSerial(string name)
+        public static MessageStream GetSequential(string name)
         {
-            return CreateLabeled(name, new EventLoopScheduler());
+            return CreateLabeled(name + "::serial::", new EventLoopScheduler());
         }
         public static MessageStream GetConcurrent(string name)
         {
-#if SILVERLIGHT
-            return CreateLabeled(name, Scheduler.ThreadPool);
-#endif
-            return CreateLabeled(name, Scheduler.TaskPool); //sorry SL4 Rx API is lame -> no Scheduler.TaskPool defined
+            return CreateLabeled(name + "::concurrent::", Scheduler.ThreadPool);
         }
         public static MessageStream GetMain()
         {
 #if SILVERLIGHT
-            return CreateLabeled("main", DispatcherScheduler.Instance); //install-package rx-xaml
+            return CreateLabeled("::main::", DispatcherScheduler.Instance); //install-package rx-xaml
 #endif
-            return CreateLabeled("main", Scheduler.CurrentThread);
+            return CreateLabeled("::main::", Scheduler.CurrentThread);
         }
         public static MessageStream GetGlobal()
         {
-            return CreateLabeled("global", new EventLoopScheduler());
+            return CreateLabeled("::global::", new EventLoopScheduler());
         }
     }
 }
