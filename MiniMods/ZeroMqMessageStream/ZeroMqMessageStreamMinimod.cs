@@ -13,7 +13,7 @@ using Minimod.MessageProcessor;
 using Newtonsoft.Json;
 using ZeroMQ;
 
-namespace ConsoleApplication1.Minimods
+namespace Minimod.ZeroMqMessageStream
 {
     /// <summary>
     /// Minimod.ZeroMQMessageStream, Version 0.0.4
