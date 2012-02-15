@@ -25,8 +25,19 @@ namespace ConsoleApplication1.Minimods
     /// </remarks>
     public interface IMessageStreamContext
     {
-        bool Send<T>(T value);
-        bool Send<T>(T message, params string[] publishAddresses);
+        void Send<T>(T value);
+        void Send<T>(T message, params string[] publishAddresses);
+    }
+
+    public class MessageNotSendException : Exception
+    {
+        public string Reason { get; private set; }
+
+        public MessageNotSendException(string reason)
+            : base(reason)
+        {
+            Reason = reason;
+        }
     }
 
     public class DocumentMessage : IMessage
@@ -129,30 +140,29 @@ namespace ConsoleApplication1.Minimods
                                                     });
         }
 
-        public bool Send<T>(T message)
+        public void Send<T>(T message)
         {
-            return SendInternal(message, _pubSocket);
+            SendInternal(message, _pubSocket);
         }
 
-        public bool Send<T>(T message, params string[] publishAddresses)
+        public void Send<T>(T message, params string[] publishAddresses)
         {
             using (var pubContact = ZmqContext.Create())
             {
                 using (var pubSocket = pubContact.CreateSocket(SocketType.PUB))
                 {
                     ConnectToPublishers(pubSocket, publishAddresses);
-                    return SendInternal(message, pubSocket);
+                    SendInternal(message, pubSocket);
                 }
             }
         }
 
-        private bool SendInternal<T>(T message, ZmqSocket socket)
+        private void SendInternal<T>(T message, ZmqSocket socket)
         {
             var status = socket.SendFrame(new Frame(SerializeMessage(message)));
             if (status.ToString() != "Sent")
-                return false;
+                throw new MessageNotSendException(status.ToString());
             Debug.WriteLine("Correlation ID: {0} - message was {1}", _correlationId, status);
-            return true;
         }
 
         private byte[] SerializeMessage<T>(T message)
