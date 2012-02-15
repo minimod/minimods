@@ -16,7 +16,7 @@ using ZeroMQ;
 namespace ConsoleApplication1.Minimods
 {
     /// <summary>
-    /// Minimod.ZeroMQMessageStream, Version 0.0.2
+    /// Minimod.ZeroMQMessageStream, Version 0.0.3
     /// <para>A minimod for messaging using ZeroMQ, Json and Rx.</para>
     /// </summary>
     /// <remarks>
