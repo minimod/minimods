@@ -13,7 +13,7 @@ using ZeroMQ;
 namespace Minimod.ZeroMqMessageStream
 {
     /// <summary>
-    /// Minimod.ZeroMqMessageStream, Version 0.0.1
+    /// Minimod.ZeroMqMessageStream, Version 0.0.2
     /// <para>A minimod for messaging using ZeroMQ, Json and Rx.</para>
     /// </summary>
     /// <remarks>
