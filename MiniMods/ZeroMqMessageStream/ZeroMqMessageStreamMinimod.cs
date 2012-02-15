@@ -16,7 +16,7 @@ using ZeroMQ;
 namespace ConsoleApplication1.Minimods
 {
     /// <summary>
-    /// Minimod.ZeroMQMessageStream, Version 0.0.3
+    /// Minimod.ZeroMQMessageStream, Version 0.0.4
     /// <para>A minimod for messaging using ZeroMQ, Json and Rx.</para>
     /// </summary>
     /// <remarks>
@@ -25,8 +25,8 @@ namespace ConsoleApplication1.Minimods
     /// </remarks>
     public interface IMessageStreamContext
     {
-        void Send<T>(T value);
-        void Send<T>(T message, params string[] publishAddresses);
+        bool Send<T>(T value);
+        bool Send<T>(T message, params string[] publishAddresses);
     }
 
     public class DocumentMessage : IMessage
@@ -129,29 +129,30 @@ namespace ConsoleApplication1.Minimods
                                                     });
         }
 
-        public void Send<T>(T message)
+        public bool Send<T>(T message)
         {
-            SendInternal(message, _pubSocket);
+            return SendInternal(message, _pubSocket);
         }
 
-        public void Send<T>(T message, params string[] publishAddresses)
+        public bool Send<T>(T message, params string[] publishAddresses)
         {
             using (var pubContact = ZmqContext.Create())
             {
                 using (var pubSocket = pubContact.CreateSocket(SocketType.PUB))
                 {
                     ConnectToPublishers(pubSocket, publishAddresses);
-                    SendInternal(message, pubSocket);
+                    return SendInternal(message, pubSocket);
                 }
             }
         }
 
-        private void SendInternal<T>(T message, ZmqSocket socket)
+        private bool SendInternal<T>(T message, ZmqSocket socket)
         {
             var status = socket.SendFrame(new Frame(SerializeMessage(message)));
             if (status.ToString() != "Sent")
-                throw new Exception("not sent");
+                return false;
             Debug.WriteLine("Correlation ID: {0} - message was {1}", _correlationId, status);
+            return true;
         }
 
         private byte[] SerializeMessage<T>(T message)
@@ -186,7 +187,7 @@ namespace ConsoleApplication1.Minimods
             _subscription.Dispose();
             _subSocket.UnsubscribeAll();
             _pubSocket.Dispose();
-            _pubContext.Dispose();            
+            _pubContext.Dispose();
         }
 
 
