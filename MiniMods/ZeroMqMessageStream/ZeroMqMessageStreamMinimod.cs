@@ -14,7 +14,7 @@ using ZeroMQ;
 namespace Minimod.ZeroMqMessageStream
 {
     /// <summary>
-    /// Minimod.ZeroMQMessageStream, Version 0.0.5
+    /// Minimod.ZeroMQMessageStream, Version 0.0.4
     /// <para>A minimod for messaging using ZeroMQ, Json and Rx.</para>
     /// </summary>
     /// <remarks>
@@ -46,14 +46,13 @@ namespace Minimod.ZeroMqMessageStream
     public class ZeroMqMessageStream : IMessageStreamContext, IDisposable
     {
         private readonly Subject<object> _stream;
-        private readonly IDisposable _subscription;
         private readonly Guid _correlationId;
         private readonly ZmqContext _context;
         private readonly ZmqSocket _subSocket;
         private readonly ZmqSocket _pubSocket;
         private readonly IScheduler _scheduler;
 
-        public IObservable<object> Stream
+        public IObservable<object> MessageStream
         {
             get
             {
@@ -185,7 +184,6 @@ namespace Minimod.ZeroMqMessageStream
         public void Dispose()
         {
             _stream.OnCompleted();
-            _subscription.Dispose();
             _subSocket.Close();
             _pubSocket.Close();
             _context.Terminate();
