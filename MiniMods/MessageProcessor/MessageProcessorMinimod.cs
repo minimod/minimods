@@ -10,7 +10,7 @@ using System.Reactive.Subjects;
 namespace Minimod.MessageProcessor
 {
     /// <summary>
-    /// Minimod.MessageProcessor, Version 0.0.4
+    /// Minimod.MessageProcessor, Version 0.0.5
     /// <para>A processor for messages.</para>
     /// </summary>
     /// <remarks>
@@ -26,13 +26,13 @@ namespace Minimod.MessageProcessor
 
     public abstract class MessageProcessor
     {
-        readonly Subject<IMessage> _subject = new Subject<IMessage>();
+        readonly Subject<object> _subject = new Subject<object>();
         protected void OnReceive<T>(Func<IObservable<T>, IObservable<T>> action)
         {
             action(_subject.OfType<T>()).Subscribe();
         }
 
-        protected MessageProcessor(IObservable<IMessage> messages)
+        protected MessageProcessor(IObservable<object> messages)
         {
             messages
                 .Multicast(_subject)
@@ -78,13 +78,13 @@ namespace Minimod.MessageProcessor
 
     public interface IMessageStream
     {
-        void Send<T>(T value) where T : IMessage;
+        void Send<T>(T value);
     }
-    public sealed class MessageStream : IObservable<IMessage>, IMessageStream
+    public sealed class MessageStream : IObservable<object>, IMessageStream
     {
         readonly string _name;
         readonly IScheduler _scheduler;
-        readonly Subject<IMessage> _messageStream = new Subject<IMessage>();
+        readonly Subject<object> _messageStream = new Subject<object>();
 
         MessageStream(string name, IScheduler scheduler)
         {
@@ -92,7 +92,7 @@ namespace Minimod.MessageProcessor
             _scheduler = scheduler;
         }
 
-        public void Send<T>(T value) where T : IMessage
+        public void Send<T>(T value)
         {
             var currentStream = MessageStreams.Single(x => x.Key == _name);
             _scheduler.Schedule(() => currentStream
@@ -102,7 +102,7 @@ namespace Minimod.MessageProcessor
         }
 
         static readonly ConcurrentDictionary<string, MessageStream> MessageStreams = new ConcurrentDictionary<string, MessageStream>();
-        public IDisposable Subscribe(IObserver<IMessage> observer)
+        public IDisposable Subscribe(IObserver<object> observer)
         {
             return _messageStream.Subscribe(observer);
         }

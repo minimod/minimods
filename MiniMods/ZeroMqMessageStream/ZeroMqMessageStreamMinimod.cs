@@ -14,7 +14,7 @@ using ZeroMQ;
 namespace Minimod.ZeroMqMessageStream
 {
     /// <summary>
-    /// Minimod.ZeroMQMessageStream, Version 0.0.4
+    /// Minimod.ZeroMQMessageStream, Version 0.0.5
     /// <para>A minimod for messaging using ZeroMQ, Json and Rx.</para>
     /// </summary>
     /// <remarks>
@@ -100,7 +100,7 @@ namespace Minimod.ZeroMqMessageStream
             });
         }
 
-        public void Send<T>(T value) where T : IMessage
+        public void Send<T>(T value)
         {
             SendInternal(value, _pubSocket);
         }
