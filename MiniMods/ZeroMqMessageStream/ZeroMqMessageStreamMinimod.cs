@@ -86,18 +86,18 @@ namespace Minimod.ZeroMqMessageStream
                 _pubSocket.Connect(publishAddress);
 
             Scheduler.NewThread.Schedule(() =>
-                                             {
-                                                 while (true)
-                                                 {
-                                                     var zmqMessage = _subSocket.ReceiveMessage(TimeSpan.FromMilliseconds(1000));
-                                                     if (zmqMessage.FrameCount >= 0 && zmqMessage.TotalSize > 1 && zmqMessage.IsComplete)
-                                                     {
-                                                         var message = Encoding.UTF8.GetString(zmqMessage.First());
-                                                         _messageStream.OnNext(message);
-                                                         Debug.WriteLine("Correlation ID: {0} - message received with status {1}", _correlationId, _subSocket.ReceiveStatus);
-                                                     }
-                                                 }
-                                             });
+            {
+                while (true)
+                {
+                    var zmqMessage = _subSocket.ReceiveMessage(TimeSpan.FromMilliseconds(1000));
+                    if (zmqMessage.FrameCount >= 0 && zmqMessage.TotalSize > 1 && zmqMessage.IsComplete)
+                    {
+                        var message = Encoding.UTF8.GetString(zmqMessage.First());
+                        _messageStream.OnNext(message);
+                        Debug.WriteLine("Correlation ID: {0} - message received with status {1}", _correlationId, _subSocket.ReceiveStatus);
+                    }
+                }
+            });
         }
 
         public void Send<T>(T value) where T : IMessage
@@ -149,37 +149,37 @@ namespace Minimod.ZeroMqMessageStream
                 .SubscribeOn(_scheduler)
                 .Select<object, dynamic>(jsonMessage => JsonConvert.DeserializeObject<ExpandoObject>(jsonMessage.ToString(), new Newtonsoft.Json.Converters.ExpandoObjectConverter()))
                 .Select<object, object>(message =>
-                                            {
-                                                try
-                                                {
-                                                    //resolve message type for deserializer
-                                                    var messageTypeDescription = ((IDictionary<string, object>)message)
-                                                        .Single(x => x.Key == "MessageTypeFullName")
-                                                        .Value
-                                                        .ToString();
-                                                    var messageType = Type.GetType(messageTypeDescription);
-                                                    ((IDictionary<string, object>)message).Remove("MessageTypeFullName");
+                {
+                    try
+                    {
+                        //resolve message type for deserializer
+                        var messageTypeDescription = ((IDictionary<string, object>)message)
+                            .Single(x => x.Key == "MessageTypeFullName")
+                            .Value
+                            .ToString();
+                        var messageType = Type.GetType(messageTypeDescription);
+                        ((IDictionary<string, object>)message).Remove("MessageTypeFullName");
 
-                                                    //i don't need it yet
-                                                    ((IDictionary<string, object>)message).Remove("CorrelationId");
-                                                    ((IDictionary<string, object>)message).Remove("CorrelationTimeStamp");
+                        //i don't need it yet
+                        ((IDictionary<string, object>)message).Remove("CorrelationId");
+                        ((IDictionary<string, object>)message).Remove("CorrelationTimeStamp");
 
-                                                    //deserialize
-                                                    var cleanedMessage = JsonConvert.SerializeObject(message);
-                                                    var deserializeObject = JsonConvert.DeserializeObject(cleanedMessage, messageType, new JsonSerializerSettings { MissingMemberHandling = MissingMemberHandling.Error, NullValueHandling = NullValueHandling.Include });
+                        //deserialize
+                        var cleanedMessage = JsonConvert.SerializeObject(message);
+                        var deserializeObject = JsonConvert.DeserializeObject(cleanedMessage, messageType, new JsonSerializerSettings { MissingMemberHandling = MissingMemberHandling.Error, NullValueHandling = NullValueHandling.Include });
 
-                                                    //add message stream context if possible
-                                                    if (deserializeObject.GetType().BaseType == typeof(DocumentMessage))
-                                                        ((DocumentMessage)deserializeObject).MessageStreamContext = this;
+                        //add message stream context if possible
+                        if (deserializeObject.GetType().BaseType == typeof(DocumentMessage))
+                            ((DocumentMessage)deserializeObject).MessageStreamContext = this;
 
-                                                    return deserializeObject;
-                                                }
-                                                catch (Exception error)
-                                                {
-                                                    _messageStream.OnError(error);
-                                                }
-                                                return message;
-                                            })
+                        return deserializeObject;
+                    }
+                    catch (Exception error)
+                    {
+                        _messageStream.OnError(error);
+                    }
+                    return message;
+                })
                 .Subscribe(observer);
         }
     }
