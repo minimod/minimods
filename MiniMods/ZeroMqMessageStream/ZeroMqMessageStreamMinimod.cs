@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Dynamic;
@@ -8,7 +7,6 @@ using System.Reactive.Concurrency;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using System.Text;
-using System.Threading;
 using Minimod.MessageProcessor;
 using Newtonsoft.Json;
 using ZeroMQ;
@@ -16,7 +14,7 @@ using ZeroMQ;
 namespace Minimod.ZeroMqMessageStream
 {
     /// <summary>
-    /// Minimod.ZeroMQMessageStream, Version 0.0.4
+    /// Minimod.ZeroMQMessageStream, Version 0.0.5
     /// <para>A minimod for messaging using ZeroMQ, Json and Rx.</para>
     /// </summary>
     /// <remarks>
@@ -50,9 +48,8 @@ namespace Minimod.ZeroMqMessageStream
         private readonly Subject<object> _stream;
         private readonly IDisposable _subscription;
         private readonly Guid _correlationId;
-        private readonly ZmqContext _subContext;
+        private readonly ZmqContext _context;
         private readonly ZmqSocket _subSocket;
-        private readonly ZmqContext _pubContext;
         private readonly ZmqSocket _pubSocket;
         private readonly IScheduler _scheduler;
 
@@ -61,6 +58,7 @@ namespace Minimod.ZeroMqMessageStream
             get
             {
                 return _stream
+                    .SubscribeOn(_scheduler)
                     .Select<object, dynamic>(jsonMessage => JsonConvert.DeserializeObject<ExpandoObject>(jsonMessage.ToString(), new Newtonsoft.Json.Converters.ExpandoObjectConverter()))
                     .Select<object, object>(message =>
                                                 {
@@ -96,6 +94,12 @@ namespace Minimod.ZeroMqMessageStream
             }
         }
 
+        public ZeroMqMessageStream(params string[] publishAddresses)
+            : this(new EventLoopScheduler(), String.Empty, publishAddresses)
+        {
+
+        }
+
         public ZeroMqMessageStream(string subsciptionAddress)
             : this(new EventLoopScheduler(), subsciptionAddress)
         {
@@ -111,10 +115,9 @@ namespace Minimod.ZeroMqMessageStream
             _scheduler = scheduler;
             _stream = new Subject<object>();
             _correlationId = Guid.NewGuid();
-            _subContext = ZmqContext.Create();
-            _subSocket = _subContext.CreateSocket(SocketType.SUB);
-            _pubContext = ZmqContext.Create();
-            _pubSocket = _pubContext.CreateSocket(SocketType.PUB);
+            _context = ZmqContext.Create();
+            _subSocket = _context.CreateSocket(SocketType.SUB);
+            _pubSocket = _context.CreateSocket(SocketType.PUB);
 
             if (!String.IsNullOrEmpty(subsciptionAddress))
             {
@@ -123,21 +126,22 @@ namespace Minimod.ZeroMqMessageStream
                 _subSocket.SubscribeAll();
             }
 
-            ConnectToPublishers(_pubSocket, publishAddresses);
+            foreach (var publishAddress in publishAddresses)
+                _pubSocket.Connect(publishAddress);
 
-            _subscription = _scheduler.Schedule(() =>
-                                                    {
-                                                        while (true)
-                                                        {
-                                                            var zmqMessage = _subSocket.ReceiveMessage(TimeSpan.FromMilliseconds(100));
-                                                            if (zmqMessage.FrameCount >= 0 && zmqMessage.TotalSize > 1 && zmqMessage.IsComplete)
-                                                            {
-                                                                var message = Encoding.UTF8.GetString(zmqMessage.First());
-                                                                _stream.OnNext(message);
-                                                                Debug.WriteLine("Correlation ID: {0} - message received with status {1}", _correlationId, _subSocket.ReceiveStatus);
-                                                            }
-                                                        }
-                                                    });
+            Scheduler.NewThread.Schedule(() =>
+                                             {
+                                                 while (true)
+                                                 {
+                                                     var zmqMessage = _subSocket.ReceiveMessage(TimeSpan.FromMilliseconds(1000));
+                                                     if (zmqMessage.FrameCount >= 0 && zmqMessage.TotalSize > 1 && zmqMessage.IsComplete)
+                                                     {
+                                                         var message = Encoding.UTF8.GetString(zmqMessage.First());
+                                                         _stream.OnNext(message);
+                                                         Debug.WriteLine("Correlation ID: {0} - message received with status {1}", _correlationId, _subSocket.ReceiveStatus);
+                                                     }
+                                                 }
+                                             });
         }
 
         public void Send<T>(T message)
@@ -147,14 +151,9 @@ namespace Minimod.ZeroMqMessageStream
 
         public void Send<T>(T message, params string[] publishAddresses)
         {
-            using (var pubContact = ZmqContext.Create())
-            {
-                using (var pubSocket = pubContact.CreateSocket(SocketType.PUB))
-                {
-                    ConnectToPublishers(pubSocket, publishAddresses);
-                    SendInternal(message, pubSocket);
-                }
-            }
+            foreach (var publishAddress in publishAddresses)
+                _pubSocket.Connect(publishAddress);
+            SendInternal(message, _pubSocket);
         }
 
         private void SendInternal<T>(T message, ZmqSocket socket)
@@ -183,29 +182,13 @@ namespace Minimod.ZeroMqMessageStream
             return Encoding.UTF8.GetBytes(serializedMessage);
         }
 
-        private void ConnectToPublishers(ZmqSocket socket, string[] publishAddresses)
-        {
-            foreach (var publishAddress in publishAddresses)
-                socket.Connect(publishAddress);
-            Thread.Sleep(publishAddresses.Count() * 2); //HACK: connect should be a blocking call
-        }
-
         public void Dispose()
         {
             _stream.OnCompleted();
-            _stream.Dispose();
             _subscription.Dispose();
-            _subSocket.UnsubscribeAll();
-            _pubSocket.Dispose();
-            _pubContext.Dispose();
-        }
-
-
-        static readonly ConcurrentDictionary<string, ZeroMqMessageStream> Instance = new ConcurrentDictionary<string, ZeroMqMessageStream>();
-
-        public static ZeroMqMessageStream GetDefault(string subscriptionAddress)
-        {
-            return Instance.GetOrAdd(subscriptionAddress, value => new ZeroMqMessageStream(subscriptionAddress));
+            _subSocket.Close();
+            _pubSocket.Close();
+            _context.Terminate();
         }
     }
 }
