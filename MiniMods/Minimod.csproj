@@ -149,6 +149,7 @@
     <Compile Include="ThreadVariable\ThreadVariable.cs" />
     <Compile Include="ThreadVariable\ThreadVariableTest.cs" />
     <Compile Include="WebSocketMessageStream\WebSocketMessageStreamMinimod.cs" />
+    <Compile Include="WebSocketMessageStream\WebSocketMessageStreamSample.cs" />
     <Compile Include="ZeroMqMessageStream\ZeroMqMessageStreamMinimod.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -188,8 +189,11 @@
     <None Include="RxMessageBroker\RxMessageBrokerMinimod.nuspec" />
     <None Include="ThreadVariable\Minimod.ThreadVariable.0.9.nupkg" />
     <None Include="ThreadVariable\ThreadVariableMinimod.nuspec" />
-    <None Include="WebSocketMessageStream\WebSocketMessageStreamMinimod.nuspec" />
     <None Include="ZeroMqMessageStream\ZeroMqMessageStreamMinimod.nuspec" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="WebSocketMessageStream\client.html" />
+    <Content Include="WebSocketMessageStream\modernizr.js" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\nuget.targets" />

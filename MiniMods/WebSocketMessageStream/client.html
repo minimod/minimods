@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Websocket - ZeroMq Bridge Demo</title>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+    <script src="modernizr.js" type="text/javascript"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            if (Modernizr.websockets) {
+                $("#result").html('Your browser has support for Web Sockets');
+            }
+            else {
+                $("#result").html('Your browser does not support Web Sockets');
+            }
+        });
+    </script>
+</head>
+    <body>
+        <div id="result"></div>
+        <div id="alphabet">
+            
+        </div>
+        <script>
+            var socket;
+            var alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+
+            function animateCharacter(letter) {
+                var upper = letter.toUpperCase();
+                $('#character_' + upper)
+                    .stop(true, true)
+                    .animate({ opacity: 1 }, 100)
+                    .animate({ opacity: .2 }, 100);
+            }
+
+            function setup() {
+                var target = $('#alphabet');
+                for (var i = 0; i <= alphabet.length; i++) {
+                    var char = alphabet.charAt(i);
+                    target.append('<span id="character_' + char + '">' + char + '</span');
+                }
+                connect();
+
+                $(document).keypress(function (e) {
+                    var char = String.fromCharCode(e.keyCode);
+                    socket.send(char);
+                });
+            };
+
+            function connect() {
+                var socket;
+                
+                try {
+                    socket = new WebSocket('ws://localhost:8181');
+                }
+                catch (err) {
+                    socket = new window.MozWebSocket('ws://localhost:8181');
+                }
+                
+                socket.onmessage = function (mess) {
+                    animateCharacter(mess.data);
+                };
+
+            };
+
+            window.onload += setup();
+        </script>
+    </body>
+</html>

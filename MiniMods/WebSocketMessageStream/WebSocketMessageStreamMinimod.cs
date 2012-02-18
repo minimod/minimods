@@ -10,7 +10,7 @@ using Minimod.MessageProcessor;
 namespace Minimod.WebSocketMessageStream
 {
     /// <summary>
-    /// Minimod.WebSocketMessageStream, Version 0.0.2
+    /// Minimod.WebSocketMessageStream, Version 0.0.3
     /// <para>A minimod for messaging using HTML5 WebSockets.</para>
     /// </summary>
     /// <remarks>
