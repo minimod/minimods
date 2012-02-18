@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/10/nuspec.xsd">
+  <metadata>
+    <version>0.0.1</version>
+    <authors>Mike Bild</authors>
+    <owners>Mike Bild</owners>
+    <licenseUrl>http://www.apache.org/licenses/LICENSE-2.0</licenseUrl>
+    <dependencies>
+      <dependency id="Rx_Experimental-Main" />
+      <dependency id="Ix_Experimental-Main" />
+      <dependency id="Fleck" />
+      <dependency id="Newtonsoft.Json" />
+      <dependency id="Minimod.MessageProcessor" />
+    </dependencies>
+    <id>Minimod.WebSocketMessageStream</id>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>A minimod for messaging using HTML5 WebSockets.</description>
+    <tags>minimod</tags>
+  </metadata>
+  <files>
+    <file src="WebSocketMessageStreamMinimod.cs" target="content\Minimods\Minimod.WebSocketMessageStream.Generated.cs" />
+  </files>
+</package>

@@ -63,6 +63,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\clrzmq.3.0.0-alpha1\lib\net40\clrzmq.dll</HintPath>
     </Reference>
+    <Reference Include="Fleck">
+      <HintPath>..\packages\Fleck.0.8.2.1\lib\net40\Fleck.dll</HintPath>
+    </Reference>
     <Reference Include="Machine.Specifications">
       <HintPath>..\packages\Machine.Specifications.0.4.23.0\lib\Machine.Specifications.dll</HintPath>
     </Reference>
@@ -84,6 +87,9 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Interactive">
+      <HintPath>..\packages\Ix_Experimental-Main.1.1.10823\lib\Net4\System.Interactive.dll</HintPath>
+    </Reference>
     <Reference Include="System.Reactive">
       <HintPath>..\packages\Rx_Experimental-Main.1.1.11111\lib\Net4\System.Reactive.dll</HintPath>
     </Reference>
@@ -142,6 +148,7 @@
     <Compile Include="ThreadVariable\TestHelper.cs" />
     <Compile Include="ThreadVariable\ThreadVariable.cs" />
     <Compile Include="ThreadVariable\ThreadVariableTest.cs" />
+    <Compile Include="WebSocketMessageStream\WebSocketMessageStreamMinimod.cs" />
     <Compile Include="ZeroMqMessageStream\ZeroMqMessageStreamMinimod.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -181,6 +188,7 @@
     <None Include="RxMessageBroker\RxMessageBrokerMinimod.nuspec" />
     <None Include="ThreadVariable\Minimod.ThreadVariable.0.9.nupkg" />
     <None Include="ThreadVariable\ThreadVariableMinimod.nuspec" />
+    <None Include="WebSocketMessageStream\WebSocketMessageStreamMinimod.nuspec" />
     <None Include="ZeroMqMessageStream\ZeroMqMessageStreamMinimod.nuspec" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
