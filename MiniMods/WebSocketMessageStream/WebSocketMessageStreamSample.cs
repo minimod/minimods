@@ -6,12 +6,24 @@ using System.Reactive.Linq;
 
 namespace Minimod.WebSocketMessageStream
 {
+    /// <summary>
+    /// Sample for Minimod.WebSocketMessageStream, Version 0.0.4
+    /// <para></para>
+    /// </summary>
+    /// <remarks>
+    /// Licensed under the Apache License, Version 2.0; you may not use this file except in compliance with the License.
+    /// http://www.apache.org/licenses/LICENSE-2.0
+    /// </remarks>
     internal class Program
     {
         static void Main(string[] args)
         {
             var socket = new WebSocketMessageStream("locahost:8181");
-            socket.Subscribe(x => Debug.WriteLine(x.ToString()));
+            socket.Subscribe(x =>
+            {
+                socket.Send(x);
+                Debug.WriteLine(x.ToString());
+            });
 
             var alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
                 .Repeat()

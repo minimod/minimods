@@ -17,11 +17,10 @@
 </head>
     <body>
         <div id="result"></div>
-        <div id="alphabet">
-            
-        </div>
+        <div id="alphabet"></div>
         <script>
             var socket;
+            var host = "ws://localhost:8181";
             var alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
             function animateCharacter(letter) {
@@ -38,6 +37,7 @@
                     var char = alphabet.charAt(i);
                     target.append('<span id="character_' + char + '">' + char + '</span');
                 }
+
                 connect();
 
                 $(document).keypress(function (e) {
@@ -47,21 +47,17 @@
             };
 
             function connect() {
-                var socket;
-                
                 try {
-                    socket = new WebSocket('ws://localhost:8181');
+                    socket = new WebSocket(host);
                 }
                 catch (err) {
-                    socket = new window.MozWebSocket('ws://localhost:8181');
+                    socket = new window.MozWebSocket(host);
                 }
-                
+
                 socket.onmessage = function (mess) {
                     animateCharacter(mess.data);
                 };
-
             };
-
             window.onload += setup();
         </script>
     </body>
