@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Reactive;
 using System.Reactive.Linq;
 using System.Threading;
@@ -21,33 +20,21 @@ namespace Minimod.MessageProcessor
             {
                 OnReceive<MyMessage>(messages => messages
                                               .Where(message => message.IsSecond)
-                                              .Do(
-                                                  message => TryCatch(Log(Log(Log(Log<MyMessage>(WhenIsSecond)))))(message)));
+                                              .Do(message => WhenIsSecond(message)));
 
                 OnReceive<MyMessage>(messages => messages
                                               .Where(message => message.IsFirst)
-                                              .Do(message => TryCatch(Log<MyMessage>(WhenIsFirst))(message)));
+                                              .Do(message => WhenIsFirst(message)));
             }
 
-            /// <summary>
-            /// Handles message.
-            /// </summary>
-            /// <param name="message">Message to handle.</param>
-            /// <returns>void</returns>
             Unit WhenIsFirst(MyMessage message)
             {
                 //throw new Exception("MY ERROR!");
                 Console.WriteLine("First - " + message.Reason + " ThreadId: " + Thread.CurrentThread.ManagedThreadId);
                 return Unit.Default;
             }
-            /// <summary>
-            /// Handles message.
-            /// </summary>
-            /// <param name="message">Message to handle.</param>
-            /// <returns></returns>
             Unit WhenIsSecond(MyMessage message)
             {
-                // handle event
                 Console.WriteLine("Second:" + message.Reason + " ThreadId: " + Thread.CurrentThread.ManagedThreadId);
                 return Unit.Default;
             }

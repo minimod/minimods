@@ -75,15 +75,9 @@
     <Reference Include="nunit.framework">
       <HintPath>..\packages\NUnit.2.5.10.11092\lib\nunit.framework.dll</HintPath>
     </Reference>
-    <Reference Include="nunit.mocks">
-      <HintPath>..\packages\NUnit.2.5.10.11092\lib\nunit.mocks.dll</HintPath>
-    </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="SharpTestsEx">
       <HintPath>..\packages\SharpTestsEx.1.1.1\lib\SharpTestsEx.dll</HintPath>
-    </Reference>
-    <Reference Include="SharpTestsEx.Mvc">
-      <HintPath>..\packages\SharpTestsEx.1.1.1\lib\SharpTestsEx.Mvc.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -93,15 +87,20 @@
     <Reference Include="System.Reactive">
       <HintPath>..\packages\Rx_Experimental-Main.1.1.11111\lib\Net4\System.Reactive.dll</HintPath>
     </Reference>
+    <Reference Include="System.ServiceModel" />
     <Reference Include="System.Web" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Continuation\ContinuationMinimod.cs" />
+    <Compile Include="HttpMessageStream\HttpContext.cs" />
+    <Compile Include="HttpMessageStream\HttpMessageProcessorMinimod.cs" />
+    <Compile Include="HttpMessageStream\HttpMessageStreamMinimod.cs" />
+    <Compile Include="HttpMessageStream\Request.cs" />
+    <Compile Include="HttpMessageStream\Result.cs" />
+    <Compile Include="HttpMessageStream\Utils\ArgumentsToDynamic.cs" />
+    <Compile Include="HttpMessageStream\Utils\UriExtensions.cs" />
+    <Compile Include="HttpMessageStream\Utils\WebRequest.cs" />
     <Compile Include="MessageProcessor\MessageProcessorMinimod.cs" />
     <Compile Include="FluentNullOrEmpty\FluentNullOrEmptyMinimod.cs" />
     <Compile Include="EventSourcing\FunctionalExtentions.cs" />
@@ -154,6 +153,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Continuation\ContinuationMinimod.nuspec" />
+    <None Include="HttpMessageStream\HttpMessageStreamMinimod.nuspec" />
     <None Include="MessageProcessor\MessageProcessorMinimod.nuspec" />
     <None Include="FluentNullOrEmpty\FluentNullOrEmptyMinimod.nuspec" />
     <None Include="FluentGenerics\FluentGenericsMinimod.nuspec">
@@ -189,6 +189,7 @@
     <None Include="RxMessageBroker\RxMessageBrokerMinimod.nuspec" />
     <None Include="ThreadVariable\Minimod.ThreadVariable.0.9.nupkg" />
     <None Include="ThreadVariable\ThreadVariableMinimod.nuspec" />
+    <None Include="WebSocketMessageStream\WebSocketMessageStreamMinimod.nuspec" />
     <None Include="ZeroMqMessageStream\ZeroMqMessageStreamMinimod.nuspec" />
   </ItemGroup>
   <ItemGroup>

@@ -2,15 +2,15 @@ using System;
 using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.Linq;
-using System.Reactive;
 using System.Reactive.Concurrency;
+using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
 
 namespace Minimod.MessageProcessor
 {
     /// <summary>
-    /// Minimod.MessageProcessor, Version 0.0.5
+    /// Minimod.MessageProcessor, Version 0.0.6
     /// <para>A processor for messages.</para>
     /// </summary>
     /// <remarks>
@@ -18,73 +18,38 @@ namespace Minimod.MessageProcessor
     /// http://www.apache.org/licenses/LICENSE-2.0
     /// </remarks>
     public interface IMessage { }
-    public class ErrorMessage : IMessage
+    public interface IMessageStream : IObservable<object>, IDisposable
     {
-        public IMessage Message { get; set; }
-        public Exception Exception { get; set; }
+        void Send<T>(T value);
     }
 
-    public abstract class MessageProcessor
+    public abstract class MessageProcessor : IDisposable
     {
-        readonly Subject<object> _subject = new Subject<object>();
+        protected readonly Subject<object> Stream = new Subject<object>();
+        private readonly IDisposable _streamSubscription;
+
         protected void OnReceive<T>(Func<IObservable<T>, IObservable<T>> action)
         {
-            action(_subject.OfType<T>()).Subscribe();
+            action(Stream.OfType<T>()).Subscribe();
         }
 
         protected MessageProcessor(IObservable<object> messages)
         {
-            messages
-                .Multicast(_subject)
-                .Connect();
+            _streamSubscription = messages.Subscribe(Stream);
         }
 
-        protected Func<T, Unit> Log<T>(Func<T, Unit> next)
+        public virtual void Dispose()
         {
-            return _ =>
-            {
-                Debug.WriteLine("Entry method: " + next.Method.Name);
-                var result = next(_);
-                Debug.WriteLine("Result method: " + next.Method.Name);
-                return result;
-            };
-        }
-        protected Func<T, Unit> TryCatch<T>(Func<T, Unit> next)
-        {
-            return message =>
-            {
-                var result = Unit.Default;
-                try
-                {
-                    result = next(message);
-                }
-                catch (Exception error)
-                {
-                    Debug.WriteLine(error.Message);
-                    MessageStream.GetMain().Send(new ErrorMessage { Message = message as IMessage, Exception = error });
-                }
-                return result;
-            };
-        }
-    }
-    public class ErrorProcessor : MessageProcessor
-    {
-        public ErrorProcessor()
-            : base(MessageStream.GetMain())
-        {
-            OnReceive<ErrorMessage>(messages => messages.Do(message => Debug.WriteLine(message.Exception.Message + " : " + message.Message)));
+            _streamSubscription.Dispose();
         }
     }
 
-    public interface IMessageStream
-    {
-        void Send<T>(T value);
-    }
-    public sealed class MessageStream : IObservable<object>, IMessageStream
+    public sealed class MessageStream : IMessageStream
     {
         readonly string _name;
         readonly IScheduler _scheduler;
         readonly Subject<object> _messageStream = new Subject<object>();
+        readonly CompositeDisposable _subscriptions = new CompositeDisposable();
 
         MessageStream(string name, IScheduler scheduler)
         {
@@ -100,13 +65,14 @@ namespace Minimod.MessageProcessor
                                       ._messageStream
                                       .OnNext(value));
         }
-
-        static readonly ConcurrentDictionary<string, MessageStream> MessageStreams = new ConcurrentDictionary<string, MessageStream>();
         public IDisposable Subscribe(IObserver<object> observer)
         {
-            return _messageStream.Subscribe(observer);
+            var subscription = _messageStream.Subscribe(observer);
+            _subscriptions.Add(subscription);
+            return subscription;
         }
 
+        static readonly ConcurrentDictionary<string, MessageStream> MessageStreams = new ConcurrentDictionary<string, MessageStream>();
         public static MessageStream CreateLabeled(string name, IScheduler scheduler)
         {
             return MessageStreams.GetOrAdd(name.ToLower(), value => new MessageStream(value, scheduler));
@@ -129,6 +95,25 @@ namespace Minimod.MessageProcessor
         public static MessageStream GetGlobal()
         {
             return CreateLabeled("::global::", new EventLoopScheduler());
+        }
+
+        public void Dispose()
+        {
+            _subscriptions.Dispose();
+        }
+    }
+
+    public class ErrorMessage : IMessage
+    {
+        public IMessage Message { get; set; }
+        public Exception Exception { get; set; }
+    }
+    public class ErrorProcessor : MessageProcessor
+    {
+        public ErrorProcessor()
+            : base(MessageStream.GetMain())
+        {
+            OnReceive<ErrorMessage>(messages => messages.Do(message => Debug.WriteLine(message.Exception.Message + " : " + message.Message)));
         }
     }
 }

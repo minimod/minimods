@@ -10,14 +10,14 @@ using Minimod.MessageProcessor;
 namespace Minimod.WebSocketMessageStream
 {
     /// <summary>
-    /// Minimod.WebSocketMessageStream, Version 0.0.4
+    /// Minimod.WebSocketMessageStream, Version 0.0.5
     /// <para>A minimod for messaging using HTML5 WebSockets.</para>
     /// </summary>
     /// <remarks>
     /// Licensed under the Apache License, Version 2.0; you may not use this file except in compliance with the License.
     /// http://www.apache.org/licenses/LICENSE-2.0
     /// </remarks>
-    public class WebSocketMessageStream : IObservable<object>, IMessageStream, IDisposable
+    public class WebSocketMessageStream : IMessageStream
     {
         readonly IScheduler _scheduler;
         private readonly Guid _correlationId;
@@ -45,7 +45,7 @@ namespace Minimod.WebSocketMessageStream
         {
             _scheduler = scheduler;
             _correlationId = Guid.NewGuid();
-            _server = new WebSocketServer("ws://" + subsciptionAddress);
+            _server = new WebSocketServer(subsciptionAddress);
             _server.Start(socket =>
             {
                 socket.OnOpen = () => _allSockets.Add(socket);

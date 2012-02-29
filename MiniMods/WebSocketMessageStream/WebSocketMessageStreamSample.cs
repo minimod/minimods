@@ -7,7 +7,7 @@ using System.Reactive.Linq;
 namespace Minimod.WebSocketMessageStream
 {
     /// <summary>
-    /// Sample for Minimod.WebSocketMessageStream, Version 0.0.4
+    /// Sample for Minimod.WebSocketMessageStream, Version 0.0.5
     /// <para></para>
     /// </summary>
     /// <remarks>
@@ -18,7 +18,7 @@ namespace Minimod.WebSocketMessageStream
     {
         static void Main(string[] args)
         {
-            var socket = new WebSocketMessageStream("locahost:8181");
+            var socket = new WebSocketMessageStream("ws://locahost:8181");
             socket.Subscribe(x =>
             {
                 socket.Send(x);
