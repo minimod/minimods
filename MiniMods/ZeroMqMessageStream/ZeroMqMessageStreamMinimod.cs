@@ -42,7 +42,7 @@ namespace Minimod.ZeroMqMessageStream
         public IMessageStreamContext MessageStreamContext { get; set; }
     }
 
-    public class ZeroMqMessageStream : IObservable<object>, IMessageStreamContext, IDisposable
+    public class ZeroMqMessageStream : IMessageStreamContext
     {
         private readonly Subject<object> _messageStream = new Subject<object>();
         private readonly Guid _correlationId;
