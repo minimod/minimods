@@ -17,7 +17,7 @@ namespace Minimod.HttpMessageStream.Sample
 
         private static Result LoadImage(string filename)
         {
-            var result = new StaticFileHtmlTextResult("images/" + filename);
+            var result = new StaticFileHtmlTextResult("minimods/sample/images/" + filename);
             result.Headers["Content-Type"] = "image/jpeg";
             return result;
         }
