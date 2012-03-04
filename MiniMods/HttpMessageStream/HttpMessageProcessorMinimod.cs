@@ -26,10 +26,10 @@ namespace Minimod.HttpMessageStream
     /// </remarks>
     public abstract class HttpMessageProcessor : MessageProcessor.MessageProcessor
     {
-        Subject<RouteFoundMessage> _routeFoundStream = new Subject<RouteFoundMessage>();
-        Subject<ServerErrorMessage> _errorStream = new Subject<ServerErrorMessage>();
+        readonly Subject<RouteFoundMessage> _routeFoundStream = new Subject<RouteFoundMessage>();
+        readonly Subject<ServerErrorMessage> _errorStream = new Subject<ServerErrorMessage>();
         private readonly IDisposable _404Subscription;
-        IDisposable _500Subscription;
+        readonly IDisposable _500Subscription;
 
         public void OnReceive<T>(string uri, Func<IObservable<T>, IObservable<T>> action)
             where T : class, IMessage
@@ -93,6 +93,8 @@ namespace Minimod.HttpMessageStream
             base.Dispose();
             _500Subscription.Dispose();
             _404Subscription.Dispose();
+            _errorStream.Dispose();
+            _routeFoundStream.Dispose();
         }
 
         private IObservable<object> Handle404NotFound()

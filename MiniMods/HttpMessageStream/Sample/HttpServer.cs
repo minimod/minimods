@@ -8,7 +8,6 @@ namespace Minimod.HttpMessageStream.Sample
         public MyLocalHostHttpHttpMessageProcessor()
             : base(new HttpMessageStream("http://127.0.0.1:1234/"))
         {
-            OnReceive<HttpGet>(request => request.Do(ctx => ctx.Result(() => new StringHtmlTextResult("add your service description here"))));
             OnReceive<HttpGet>("/1", request => request.Do(ctx => ctx.Result(HelloWorld1)));
             OnReceive<HttpGet>("/2", request => request.Do(ctx => ctx.Result(() => new StringHtmlTextResult("Hello World 2"))));
             OnReceive<HttpGet>("/loadimage/{filename}", request => request.Do(ctx => ctx.Result(() => LoadImage(ctx.Request.UriArguments.filename))));
