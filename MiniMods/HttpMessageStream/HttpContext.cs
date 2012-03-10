@@ -93,13 +93,6 @@ namespace Minimod.HttpMessageStream
         {
         }
     }
-    public class HttpOptions : HttpContext
-    {
-        public HttpOptions(HttpListenerRequest request, HttpListenerResponse response)
-            : base(request, response)
-        {
-        }
-    }
     public class HttpTrace : HttpContext
     {
         public HttpTrace(HttpListenerRequest request, HttpListenerResponse response)

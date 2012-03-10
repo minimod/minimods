@@ -41,7 +41,7 @@ namespace Minimod.HttpMessageStream
                             catch
                             {
                             }
-                            
+
                         }, error => { try { listenerResponse.StatusCode = 500; listenerResponse.OutputStream.Close(); } catch { } })
                 .Retry()
                 .Subscribe();

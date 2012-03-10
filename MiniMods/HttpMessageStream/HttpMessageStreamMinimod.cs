@@ -7,7 +7,7 @@ using Minimod.MessageProcessor;
 namespace Minimod.HttpMessageStream
 {
     /// <summary>
-    /// Minimod.HttpMessageStream, Version 0.0.5
+    /// Minimod.HttpMessageStream, Version 0.0.6
     /// <para>Small embedded web server based on Rx and working like node.js.</para>
     /// </summary>
     /// <remarks>

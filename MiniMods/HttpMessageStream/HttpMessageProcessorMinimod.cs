@@ -1,6 +1,7 @@
 using System;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
+using Minimod.HttpMessageStream.Utils;
 using Minimod.MessageProcessor;
 
 namespace Minimod.HttpMessageStream
@@ -17,7 +18,7 @@ namespace Minimod.HttpMessageStream
     }
 
     /// <summary>
-    /// Minimod.HttpMessageStream, Version 0.0.5
+    /// Minimod.HttpMessageStream, Version 0.0.6
     /// <para>Small embedded web server based on Rx and working like node.js.</para>
     /// </summary>
     /// <remarks>
@@ -33,7 +34,7 @@ namespace Minimod.HttpMessageStream
         {
             var contextPipe = Stream
                 .OfType<HttpContext>()
-                .Where(httpContext => httpContext.TryHandleRoute(uri))
+                .Where(httpContext => httpContext.Request.HttpMethod == "OPTIONS" || httpContext.TryHandleRoute(uri))
                 .Select(httpContext =>
                 {
                     switch (httpContext.Request.HttpMethod)
@@ -49,7 +50,7 @@ namespace Minimod.HttpMessageStream
                         case "HEAD":
                             return new HttpHead(httpContext.ListenerRequest, httpContext.ListenerResponse) as T;
                         case "OPTIONS":
-                            return new HttpOptions(httpContext.ListenerRequest, httpContext.ListenerResponse) as T;
+                            return new HttpGet(httpContext.ListenerRequest, httpContext.ListenerResponse) as T;
                         case "TRACE":
                             return new HttpTrace(httpContext.ListenerRequest, httpContext.ListenerResponse) as T;
                         default:
@@ -65,7 +66,16 @@ namespace Minimod.HttpMessageStream
                                     .OfType<HttpContext>()
                                     .Do(httpContext =>
                                     {
-                                        try { httpContext.ExecuteResult().Send(httpContext.ListenerResponse); }
+                                        try
+                                        {
+                                            var result = httpContext.ExecuteResult();
+                                            result.Headers.Add("Access-Control-Allow-Origin", "*");
+                                            result.Headers.Add("Access-Control-Allow-Methods", "PUT,PATCH,GET,DELETE,POST");
+                                            result.Headers.Add("Access-Control-Max-Age", "1728000");
+                                            result.Headers.Add("Access-Control-Allow-Headers", "*");
+                                            result.Headers.Add("Origin", httpContext.Request.Url.GetServerBaseUri());
+                                            result.Send(httpContext.ListenerResponse);
+                                        }
                                         catch (Exception error)
                                         {
                                             var message = error.Message;
