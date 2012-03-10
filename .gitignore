@@ -29,6 +29,8 @@ packages/
 _ReSharper*/
 [Tt]est[Rr]esult*
 *.crunchsolution.local.xml
+MiniMods.ncrunchsolution
+MiniMods/Minimod.ncrunchproject
 *.nupkg
 target
 #Include files
