@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+  <metadata>
+    <id>Minimod.String2Enum</id>
+    <version>0.9.2</version>
+    <authors>Michel Bretschneider</authors>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <licenseUrl>http://www.apache.org/licenses/LICENSE-2.0</licenseUrl>
+    <tags>minimod</tags>
+    <description xml:space="preserve">A minimod for parsing Strings as Enums.</description>
+  </metadata>
+  <files>
+    <file src="String2EnumMinimod.cs" target="content\Minimods\Minimod.String2Enum.Generated.cs" />
+  </files>
+</package>
