@@ -44,6 +44,9 @@ namespace Minimod.PrettyPrint
 
             settings.RegisterFormatterFor<Guid>(formatter);
 
+            // decimal is not a simple type?
+            settings.RegisterFormatterFor<decimal>(d => d + "m");
+
             GenericFormatter.Register(settings);
             FileSystemInfoFormatter.Register(settings);
 
