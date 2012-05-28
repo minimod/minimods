@@ -145,6 +145,7 @@
     <Compile Include="MVVM\MVVMMinimod.cs" />
     <Compile Include="EventSourcing\EventSource.cs" />
     <Compile Include="EventSourcing\RxEventSourcingMinimod.cs" />
+    <Compile Include="PropertyName\PropertyNameMinimod.cs" />
     <Compile Include="RabbitMqTopicsMessageStream\RabbitMqTopicsMessageStreamMinimod.cs" />
     <Compile Include="RabbitMqTopicsMessageStream\RabbitMqTopicsMessageStreamSample.cs" />
     <Compile Include="RxEventRepository\RxEventRepositoryMinimod.cs" />
