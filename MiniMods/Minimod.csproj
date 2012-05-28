@@ -84,6 +84,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Data" />
     <Reference Include="System.Interactive">
       <HintPath>..\packages\Ix_Experimental-Main.1.1.10823\lib\Net4\System.Interactive.dll</HintPath>
     </Reference>
@@ -96,6 +97,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Continuation\ContinuationMinimod.cs" />
+    <Compile Include="DataReader\DataReaderMinimod.cs" />
     <Compile Include="HttpMessageStream\HttpContext.cs" />
     <Compile Include="HttpMessageStream\HttpMessageProcessorMinimod.cs" />
     <Compile Include="HttpMessageStream\HttpMessageStreamMinimod.cs" />
@@ -145,7 +147,6 @@
     <Compile Include="MVVM\MVVMMinimod.cs" />
     <Compile Include="EventSourcing\EventSource.cs" />
     <Compile Include="EventSourcing\RxEventSourcingMinimod.cs" />
-    <Compile Include="PropertyName\PropertyNameMinimod.cs" />
     <Compile Include="RabbitMqTopicsMessageStream\RabbitMqTopicsMessageStreamMinimod.cs" />
     <Compile Include="RabbitMqTopicsMessageStream\RabbitMqTopicsMessageStreamSample.cs" />
     <Compile Include="RxEventRepository\RxEventRepositoryMinimod.cs" />
@@ -161,6 +162,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Continuation\ContinuationMinimod.nuspec" />
+    <None Include="DataReader\DataReaderMinimod.nuspec" />
     <None Include="HttpMessageStream\HttpMessageStreamMinimod.nuspec" />
     <None Include="MessageProcessor\MessageProcessorMinimod.nuspec" />
     <None Include="FluentNullOrEmpty\FluentNullOrEmptyMinimod.nuspec" />
