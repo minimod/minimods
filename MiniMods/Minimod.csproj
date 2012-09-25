@@ -93,9 +93,11 @@
     <Reference Include="System.ServiceModel" />
     <Reference Include="System.Web" />
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Web.Mvc, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Continuation\ContinuationMinimod.cs" />
+    <Compile Include="Mvc3JsonNetResult\Mvc3JsonNetResult.cs" />
     <Compile Include="HttpMessageStream\HttpContext.cs" />
     <Compile Include="HttpMessageStream\HttpMessageProcessorMinimod.cs" />
     <Compile Include="HttpMessageStream\HttpMessageStreamMinimod.cs" />
@@ -160,6 +162,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Continuation\ContinuationMinimod.nuspec" />
+    <None Include="Mvc3JsonNetResult\Mvc3JsonNetResult.nuspec">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="HttpMessageStream\HttpMessageStreamMinimod.nuspec" />
     <None Include="MessageProcessor\MessageProcessorMinimod.nuspec" />
     <None Include="FluentNullOrEmpty\FluentNullOrEmptyMinimod.nuspec" />
