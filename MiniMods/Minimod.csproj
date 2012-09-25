@@ -152,6 +152,7 @@
     <Compile Include="RxEventRepository\RxEventRepositoryMinimod.cs" />
     <Compile Include="RxEventRepository\RxEventRepositoryMinimodSamples.cs" />
     <Compile Include="RxMessageBroker\RxMessageBrokerMinimod.cs" />
+    <Compile Include="String2Enum\String2EnumMinimod.cs" />
     <Compile Include="ThreadVariable\RealWorldExample.cs" />
     <Compile Include="ThreadVariable\TestHelper.cs" />
     <Compile Include="ThreadVariable\ThreadVariable.cs" />
@@ -200,6 +201,7 @@
     <None Include="RabbitMqTopicsMessageStream\RabbitMqTopicsMessageStreamMinimod.nuspec" />
     <None Include="RxEventRepository\RxEventRepositoryMinimod.nuspec" />
     <None Include="RxMessageBroker\RxMessageBrokerMinimod.nuspec" />
+    <None Include="String2Enum\String2EnumMinimod.nuspec" />
     <None Include="ThreadVariable\Minimod.ThreadVariable.0.9.nupkg" />
     <None Include="ThreadVariable\ThreadVariableMinimod.nuspec" />
     <None Include="WebSocketMessageStream\WebSocketMessageStreamMinimod.nuspec" />

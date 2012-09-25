@@ -5,7 +5,7 @@ using System.Threading;
 namespace Minimod.ThreadVariable
 {
     /// <summary>
-    /// <h1>Minimod.ThreadVariable, Version 0.9, Copyright © Lars Corneliussen 2011</h1>
+    /// <h1>Minimod.ThreadVariable, Version 1.0.0, Copyright © Lars Corneliussen 2011</h1>
     /// <para>Makes thread variables (<see cref="ThreadStaticAttribute"/>) available 
     /// only inside a specific scope. It also manages nested usage of scopes on 
     /// the same variable declaration.</para>
@@ -39,7 +39,7 @@ namespace Minimod.ThreadVariable
     /// </code>
     /// </example>
     /// <typeparam name="T">The type of the values to store.</typeparam>
-    public class ThreadVariable<T>
+    internal class ThreadVariable<T>
     {
         /// <summary>
         /// Storing the default value for a struct, null for a class or a 

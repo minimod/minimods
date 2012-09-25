@@ -9,7 +9,7 @@ using System.Text;
 namespace Minimod.PrettyTypeSignatures
 {
     /// <summary>
-    /// Minimod.PrettyTypeSignatures, Version 0.9.1
+    /// Minimod.PrettyTypeSignatures, Version 1.0.0
     /// <para>A minimod with reflection extensions, printing nice type and type member names.</para>
     /// </summary>
     /// <remarks>

@@ -3,7 +3,7 @@
 namespace Minimod.PrettyDateAndTime
 {
     /// <summary>
-    /// Minimod.PrettyDateAndTimeMinimod, Version 0.8.1
+    /// Minimod.PrettyDateAndTimeMinimod, Version 1.0.0
     /// <para>Formats DateTime, DateTimeOffset and TimeSpan in a very readable manner.</para>
     /// </summary>
     /// <remarks>

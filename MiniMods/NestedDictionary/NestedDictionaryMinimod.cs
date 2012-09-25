@@ -3,7 +3,7 @@
 namespace Minimod.NestedDictionary
 {
     /// <summary>
-    /// <h1>Minimod.NestedDictionary, Version 0.9.0, Copyright © Lars Corneliussen 2011</h1>
+    /// <h1>Minimod.NestedDictionary, Version 1.0.0, Copyright © Lars Corneliussen 2011</h1>
     /// <para>Sometimes you wan't to collect or cache some data in lists by key, or even nested dictionaries. </para>
     /// <para>Then, for each new key, you have to instanciate the list or nested dictionary, before you can put it in.</para>
     /// </summary>
@@ -11,7 +11,7 @@ namespace Minimod.NestedDictionary
     /// Licensed under the Apache License, Version 2.0; you may not use this file except in compliance with the License.
     /// http://www.apache.org/licenses/LICENSE-2.0
     /// </remarks>
-    public static class NestedDictionaryMinimod
+    internal static class NestedDictionaryMinimod
     {
         /// <summary>
         /// Ensures a <typeparamref name="TCol"/> for <typeparamref name="TKey"/>, and adds all <paramref name="items"/> to it.
