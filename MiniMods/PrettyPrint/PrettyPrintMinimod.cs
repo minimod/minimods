@@ -437,6 +437,11 @@ namespace Minimod.PrettyPrint
                 return enumerable(anyObject as IEnumerable, declaredType, settings);
             }
 
+            if (declaredType.IsEnum && Enum.IsDefined(declaredType, anyObject))
+            {
+                return String.Format("<{0}.{1} = {2}>", declaredType.Name, Enum.GetName(declaredType, anyObject), (int)anyObject);
+            }
+
             return GenericFormatter.Format(actualType, anyObject, settings);
         }
 
