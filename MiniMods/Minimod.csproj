@@ -96,7 +96,10 @@
     <Reference Include="System.Web.Mvc, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AssertUniqueness\AssertUniquenessMinimod.cs" />
     <Compile Include="Continuation\ContinuationMinimod.cs" />
+    <Compile Include="IgnoreVisibilityMinimod\IgnoreVisibilityMinimod.cs" />
+    <Compile Include="FluentHashes\FluentHashesMinimod.cs" />
     <Compile Include="Mvc3JsonNetResult\Mvc3JsonNetResult.cs" />
     <Compile Include="HttpMessageStream\HttpContext.cs" />
     <Compile Include="HttpMessageStream\HttpMessageProcessorMinimod.cs" />
@@ -163,6 +166,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Continuation\ContinuationMinimod.nuspec" />
+    <None Include="IgnoreVisibilityMinimod\IgnoreVisibilityMinimod.nuspec">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="FluentHashes\FluentHashesMinimod.nuspec">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="Mvc3JsonNetResult\Mvc3JsonNetResult.nuspec">
       <SubType>Designer</SubType>
     </None>
@@ -203,7 +212,9 @@
     <None Include="RxMessageBroker\RxMessageBrokerMinimod.nuspec" />
     <None Include="String2Enum\String2EnumMinimod.nuspec" />
     <None Include="ThreadVariable\Minimod.ThreadVariable.0.9.nupkg" />
-    <None Include="ThreadVariable\ThreadVariableMinimod.nuspec" />
+    <None Include="ThreadVariable\ThreadVariableMinimod.nuspec">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="WebSocketMessageStream\WebSocketMessageStreamMinimod.nuspec" />
     <None Include="ZeroMqMessageStream\ZeroMqMessageStreamMinimod.nuspec" />
   </ItemGroup>
