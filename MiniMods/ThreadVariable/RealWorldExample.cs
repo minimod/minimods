@@ -5,7 +5,7 @@ using NUnit.Framework;
 
 namespace Minimod.ThreadVariable
 {
-    [TestFixture, Ignore]
+    [TestFixture]
     public class RealWorldExample
     {
         [Test]
@@ -62,7 +62,7 @@ namespace Minimod.ThreadVariable
 
     public class UserContext
     {
-        private static readonly ThreadVariable<bool> isSuperUser = new ThreadVariable<bool>();
+        private static readonly ThreadVariable<bool> isSuperUser = new ThreadVariable<bool>(false);
 
         public static bool IsSuperUser
         {
@@ -92,6 +92,6 @@ namespace Minimod.ThreadVariable
 
     public static class SomeThreadVars
     {
-        public static readonly ThreadVariable<bool> IsSuperUser = new ThreadVariable<bool>();
+        internal static readonly ThreadVariable<bool> IsSuperUser = new ThreadVariable<bool>(false);
     }
 }
