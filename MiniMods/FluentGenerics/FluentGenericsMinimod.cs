@@ -8,7 +8,7 @@ using Minimod.PrettyTypeSignatures;
 namespace Minimod.FluentGenerics
 {
     /// <summary>
-    /// <h1>Minimod.FluentGenerics, Version 1.0.0, Copyright © Lars Corneliussen 2011</h1>
+    /// <h1>Minimod.FluentGenerics, Version 1.0.1, Copyright © Lars Corneliussen 2011</h1>
     /// <para>A minimod for fluently interacting with genric types.</para>
     /// </summary>
     /// <remarks>
@@ -19,7 +19,7 @@ namespace Minimod.FluentGenerics
     {
         public static bool IsOfGenericType(this Type type, Type genericTypeDefinition)
         {
-            return findGenericTypesForDefinition(type, genericTypeDefinition) != null;
+            return findGenericTypesForDefinition(type, genericTypeDefinition).Length > 0;
         }
 
         public static Type[] GetGenericTypesFor(this Type type, Type genericTypeDefinition)
