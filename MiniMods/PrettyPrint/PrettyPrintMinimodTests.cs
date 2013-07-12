@@ -254,6 +254,12 @@ Germany"
                 ;
         }
 
+        [Test]
+        public void PrettyPrint_Enum()
+        {
+            testAndLog(() => TestEnum.First, "<TestEnum.First = 0>");
+        }
+
         private void testAndLog<T>(Expression<Func<T>> func, string expected)
         {
             testAndLog(func, expected, s => s);
@@ -297,5 +303,17 @@ Germany"
     {
         public string Name;
         public string[] Address;
+    }
+
+    public enum TestEnum
+    {
+        First = 0,
+        Second = 1
+    }
+
+    public class HasEnums
+    {
+        public TestEnum EnumProperty { get; set; }
+        public TestEnum EnumField;
     }
 }
