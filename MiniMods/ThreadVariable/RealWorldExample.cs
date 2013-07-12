@@ -90,7 +90,7 @@ namespace Minimod.ThreadVariable
         }
     }
 
-    public static class SomeThreadVars
+    internal static class SomeThreadVars
     {
         internal static readonly ThreadVariable<bool> IsSuperUser = new ThreadVariable<bool>(false);
     }
