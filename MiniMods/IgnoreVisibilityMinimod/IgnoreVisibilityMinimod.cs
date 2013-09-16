@@ -10,7 +10,7 @@ using System.Text;
 namespace Minimod.IgnoreVisibility
 {
     /// <summary>
-    /// Minimod.IgnoreVisibility, Version 0.9.0
+    /// Minimod.IgnoreVisibility, Version 1.2.0
     /// <para>Wraps an object in a DynamicObject that allows to operate on private and protected class members.</para>
     /// </summary>
     /// <remarks>
