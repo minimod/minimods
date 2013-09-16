@@ -157,8 +157,18 @@ namespace Minimod.IgnoreVisibility
 
             public override bool TryConvert(ConvertBinder binder, out object result)
             {
-                result = Convert.ChangeType(RealObject, binder.Type);
-                return true;
+                if (binder.Type.IsAssignableFrom(RealObject.GetType()))
+                {
+                    result = RealObject;
+                    return true;
+                }
+                if (RealObject is IConvertible)
+                {
+                    result = Convert.ChangeType(RealObject, binder.Type);
+                    return true;
+                }
+                result = null;
+                return false;
             }
 
             public override string ToString()
