@@ -15,7 +15,7 @@ using Minimod.PrettyTypeSignatures;
 namespace Minimod.PrettyPrint
 {
     /// <summary>
-    /// <h1>Minimod.PrettyPrint, Version 1.0.0, Copyright © Lars Corneliussen 2011</h1>
+    /// <h1>Minimod.PrettyPrint, Version 1.0.1, Copyright © Lars Corneliussen 2011</h1>
     /// <para>Creates nice textual representations of any objects. Mostly meant for debug/informational output.</para>
     /// </summary>
     /// <remarks>
@@ -542,7 +542,8 @@ namespace Minimod.PrettyPrint
             {
                 var properties =
                     from prop in actualType.GetMembers().OfType<PropertyInfo>()
-                    where !prop.GetGetMethod().IsStatic && prop.GetIndexParameters().Length == 0
+                    let getMethod = prop.GetGetMethod()
+                    where getMethod != null && !getMethod.IsStatic && prop.GetIndexParameters().Length == 0
                     let safeValue = getValueOrException(anyObject, () => prop.GetValue(anyObject, new object[0]))
                     select
                         new
