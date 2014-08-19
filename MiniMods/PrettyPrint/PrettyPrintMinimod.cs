@@ -14,6 +14,33 @@ using Minimod.PrettyTypeSignatures;
 
 namespace Minimod.PrettyPrint
 {
+    internal class FrameStack
+    {
+        private object head;
+        private FrameStack tail;
+
+        public static FrameStack Empty = new FrameStack();
+
+        private FrameStack() {}
+
+        public FrameStack(object obj, FrameStack rest)
+        {
+            head = obj;
+            tail = rest;
+        }
+
+        public bool Contains(object obj)
+        {
+            var current = this;
+            while (current != Empty)
+            {
+                if (current.head == obj) return true;
+                current = current.tail;
+            }
+            return false;
+        }
+    }
+
     /// <summary>
     /// <h1>Minimod.PrettyPrint, Version 1.0.1, Copyright © Lars Corneliussen 2011</h1>
     /// <para>Creates nice textual representations of any objects. Mostly meant for debug/informational output.</para>
@@ -406,9 +433,19 @@ namespace Minimod.PrettyPrint
 
         public static string PrettyPrint(this object anyObject, Type declaredType, Settings settings)
         {
+            return PrettyPrint(anyObject, declaredType, settings, FrameStack.Empty);
+        }
+
+        internal static string PrettyPrint(object anyObject, Type declaredType, Settings settings, FrameStack printing)
+        {
             if (anyObject == null)
             {
                 return "<null" + (declaredType != typeof(object) ? ", " + declaredType.GetPrettyName() : "") + ">";
+            }
+
+            if (printing.Contains(anyObject))
+            {
+                return "<" + anyObject.GetType().GetPrettyName() + " - referenced earlier>";
             }
 
             var formatter = settings.GetCustomFormatter(anyObject);
@@ -434,7 +471,7 @@ namespace Minimod.PrettyPrint
 
             if (anyObject is IEnumerable)
             {
-                return enumerable(anyObject as IEnumerable, declaredType, settings);
+                return enumerable(anyObject as IEnumerable, declaredType, settings, new FrameStack(anyObject, printing));
             }
 
             if (declaredType.IsEnum && Enum.IsDefined(declaredType, anyObject))
@@ -442,14 +479,14 @@ namespace Minimod.PrettyPrint
                 return String.Format("<{0}.{1} = {2}>", declaredType.Name, Enum.GetName(declaredType, anyObject), (int)anyObject);
             }
 
-            return GenericFormatter.Format(actualType, anyObject, settings);
+            return GenericFormatter.Format(actualType, anyObject, settings, new FrameStack(anyObject, printing));
         }
 
         #endregion
 
-        private static string enumerable(IEnumerable objects, Type declaredType, Settings settings)
+        private static string enumerable(IEnumerable objects, Type declaredType, Settings settings, FrameStack printing)
         {
-            string[] items = objects.Cast<object>().Select(_ => _.PrettyPrint(settings)).ToArray();
+            string[] items = objects.Cast<object>().Select(x => PrettyPrint(x, x.GetType(), settings, printing)).ToArray();
 
             if (settings.PrefersMultiline
                 ?? (
@@ -503,12 +540,17 @@ namespace Minimod.PrettyPrint
 
             public static string Format(Type actualType, object anyObject, Settings settings)
             {
+                return Format(actualType, anyObject, settings, FrameStack.Empty);
+            }
+
+            internal static string Format(Type actualType, object anyObject, Settings settings, FrameStack printing)
+            {
                 if (actualType == null) throw new ArgumentNullException("actualType");
                 if (anyObject == null) throw new ArgumentNullException("anyObject");
                 if (settings == null) throw new ArgumentNullException("settings");
 
                 var members =
-                    findAndFormatMembers(anyObject, settings, actualType)
+                    findAndFormatMembers(anyObject, settings, actualType, printing)
                         .Where(m => m.Value != null || (settings.OmitsNullMembers ?? false))
                         .ToArray();
 
@@ -538,7 +580,7 @@ namespace Minimod.PrettyPrint
             }
 
             private static IEnumerable<MemberDetails> findAndFormatMembers(object anyObject, Settings settings,
-                                                                           Type actualType)
+                                                                           Type actualType, FrameStack printing)
             {
                 var properties =
                     from prop in actualType.GetMembers().OfType<PropertyInfo>()
@@ -581,7 +623,7 @@ namespace Minimod.PrettyPrint
                     {
                         pretty = hasCustomFormatter
                                      ? propFormatter(m.value, m.name, anyObject, settings)
-                                     : m.value.PrettyPrint(m.type, settings);
+                                     : PrettyPrint(m.value, m.type, settings, printing);
                     }
                     else
                     {
