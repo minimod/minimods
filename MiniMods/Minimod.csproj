@@ -63,6 +63,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\clrzmq.3.0.0-alpha1\lib\net40\clrzmq.dll</HintPath>
     </Reference>
+    <Reference Include="CsvHelper">
+      <HintPath>..\packages\CsvHelper.2.7.1\lib\net40-client\CsvHelper.dll</HintPath>
+    </Reference>
     <Reference Include="Fleck">
       <HintPath>..\packages\Fleck.0.8.2.1\lib\net40\Fleck.dll</HintPath>
     </Reference>
@@ -100,6 +103,7 @@
     <Compile Include="Continuation\ContinuationMinimod.cs" />
     <Compile Include="IgnoreVisibilityMinimod\IgnoreVisibilityMinimod.cs" />
     <Compile Include="FluentHashes\FluentHashesMinimod.cs" />
+    <Compile Include="CsvHelperMvcActionResult\CsvHelperMvcActionResult.cs" />
     <Compile Include="Mvc3JsonNetResult\Mvc3JsonNetResult.cs" />
     <Compile Include="HttpMessageStream\HttpContext.cs" />
     <Compile Include="HttpMessageStream\HttpMessageProcessorMinimod.cs" />
@@ -170,6 +174,9 @@
       <SubType>Designer</SubType>
     </None>
     <None Include="FluentHashes\FluentHashesMinimod.nuspec">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="CsvHelperMvcActionResult\CsvHelperMvcActionResult.nuspec">
       <SubType>Designer</SubType>
     </None>
     <None Include="Mvc3JsonNetResult\Mvc3JsonNetResult.nuspec">

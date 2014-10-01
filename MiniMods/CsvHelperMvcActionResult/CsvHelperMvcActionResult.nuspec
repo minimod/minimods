@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+  <metadata>
+    <id>Minimod.CsvHelperMvcActionResult</id>
+    <version>0.9.0</version>
+    <authors>Lars Corneliussen</authors>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <licenseUrl>http://www.apache.org/licenses/LICENSE-2.0</licenseUrl>
+    <tags>minimod</tags>
+    <summary>ActionResult for generating downloadable csv-files using CsvHelper.</summary>
+    <description xml:space="preserve">ActionResult for generating downloadable csv-files using CsvHelper</description>
+    <dependencies>
+      <dependency id="CsvHelper"/>
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="CsvHelperMvcActionResult.cs" target="content\Minimods\Minimod.CsvHelperMvcActionResult.Generated.cs" />
+  </files>
+</package>
