@@ -1,15 +1,15 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
   <metadata>
-    <id>Minimod.ThreadVariable</id>
-    <version>1.0.0</version>
+    <id>Minimod.FluentHashes</id>
+    <version>1.1.0</version>
     <authors>Lars Corneliussen</authors>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <licenseUrl>http://www.apache.org/licenses/LICENSE-2.0</licenseUrl>
-    <tags>minimod</tags>
-    <description xml:space="preserve">Typesafe thread-static variables.</description>
+    <tags>minimod</tags>    
+    <description xml:space="preserve">A set of extensions to create MD5 and SHAx hashes from string phrases.</description>
   </metadata>
   <files>
-    <file src="ThreadVariable.cs" target="content\Minimods\Minimod.ThreadVariable.Generated.cs" />
+    <file src="FluentHashesMinimod.cs" target="content\Minimods\Minimod.FluentHashes.Generated.cs" />
   </files>
 </package>

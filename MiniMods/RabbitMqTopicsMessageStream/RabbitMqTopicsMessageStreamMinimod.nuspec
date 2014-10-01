@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/10/nuspec.xsd">
+  <metadata>
+    <version>0.0.2</version>
+    <authors>Mike Bild</authors>
+    <owners>Mike Bild</owners>
+    <licenseUrl>http://www.apache.org/licenses/LICENSE-2.0</licenseUrl>
+    <dependencies>
+      <dependency id="RabbitMQ.Client" version="2.8.1" />
+      <dependency id="Rx_Experimental-Main" />
+      <dependency id="Newtonsoft.Json" version="[4.0.8]" />
+    </dependencies>
+    <id>Minimod.RabbitMqTopicsMessageStream</id>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>A minimod for RabbitMQ message processing.</description>
+    <tags>minimod</tags>
+  </metadata>
+  <files>
+    <file src="RabbitMqTopicsMessageStreamMinimod.cs" target="content\Minimods\Minimod.RabbitMqTopicsMessageStream.Generated.cs" />
+    <file src="RabbitMqTopicsMessageStreamSample.cs" target="content\Minimods\Sample\RabbitMqTopicsMessageStreamSample.cs" />
+  </files>
+</package>

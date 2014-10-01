@@ -3,7 +3,7 @@
 **«It's message based data und single thread processing like an actor model with a new name [M]essage, [V]iew/[V]alue, [Processor] ;-) and was inpired from Grand Central Dispatch and Ayendes blog post for processor abstraction.»**
 
 TODO:
-* cut of Silverlight XAML implementations (nuget packaging by target framework?)
+* cut off Silverlight XAML implementations (nuget packaging by target framework?)
 * more tests :-(
 * more samples
 

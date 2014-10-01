@@ -8,18 +8,18 @@ using Minimod.PrettyTypeSignatures;
 namespace Minimod.FluentGenerics
 {
     /// <summary>
-    /// <h1>Minimod.FluentGenerics, Version 0.9.0, Copyright © Lars Corneliussen 2011</h1>
+    /// <h1>Minimod.FluentGenerics, Version 1.0.1, Copyright © Lars Corneliussen 2011</h1>
     /// <para>A minimod for fluently interacting with genric types.</para>
     /// </summary>
     /// <remarks>
     /// Licensed under the Apache License, Version 2.0; you may not use this file except in compliance with the License.
     /// http://www.apache.org/licenses/LICENSE-2.0
     /// </remarks>
-    public static class FluentGenericsMinimod
+    internal static class FluentGenericsMinimod
     {
         public static bool IsOfGenericType(this Type type, Type genericTypeDefinition)
         {
-            return findGenericTypesForDefinition(type, genericTypeDefinition) != null;
+            return findGenericTypesForDefinition(type, genericTypeDefinition).Length > 0;
         }
 
         public static Type[] GetGenericTypesFor(this Type type, Type genericTypeDefinition)
