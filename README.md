@@ -5,7 +5,7 @@
 > and, at this github site, a collection of some Minimods from the authors.
 
 ### Current Minimods
-Find all currently published Minimods on Nuget Gallery: http://bit.ly/nuget-minimods
+Find all currently published Minimods on Nuget Gallery: http://bit.ly/nuget-minimod
 
 ### Our Intention
 

@@ -52,6 +52,13 @@ namespace Minimod.FluentGenerics
         }
 
         [Test]
+        public void IsOfGenericType_ListOfInts_IsNotGenericList()
+        {
+            typeof(IEnumerable<int>).IsOfGenericType(typeof(IList<>))
+                .Should().Be.False();
+        }
+
+        [Test]
         public void GetGenericArgumentsFor_ListOfInts_ArgForIListShouldBeAnInt()
         {
             typeof(List<int>).GetGenericArgumentsFor(typeof(IList<>))

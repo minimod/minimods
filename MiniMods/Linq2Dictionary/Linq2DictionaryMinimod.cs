@@ -5,14 +5,14 @@ using System.Linq;
 namespace Minimod.Linq2Dictionary
 {
     /// <summary>
-    /// <h1>Minimod.Linq2Dictionary, Version 0.9.0, Copyright © Lars Corneliussen 2011</h1>
+    /// <h1>Minimod.Linq2Dictionary, Version 1.0.0, Copyright © Lars Corneliussen 2011</h1>
     /// <para>Extends the Dictionary with some linquish Methods like Union, (more to come).</para>
     /// </summary>
     /// <remarks>
     /// Licensed under the Apache License, Version 2.0; you may not use this file except in compliance with the License.
     /// http://www.apache.org/licenses/LICENSE-2.0
     /// </remarks>
-    public static class Linq2DictionaryMinimod
+    internal static class Linq2DictionaryMinimod
     {
         /// <summary>
         /// Unions the key-value-pairs of two dictionaries into one.

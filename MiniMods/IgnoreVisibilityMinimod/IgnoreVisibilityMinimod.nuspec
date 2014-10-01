@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+  <metadata>
+    <id>Minimod.IgnoreVisibilityMinimod</id>
+    <version>1.2.0</version>
+    <authors>Lars Corneliussen</authors>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <licenseUrl>http://www.apache.org/licenses/LICENSE-2.0</licenseUrl>
+    <tags>minimod</tags>    
+    <description xml:space="preserve">Wraps an object in a DynamicObject that allows to operate on private and protected class members.</description>
+  </metadata>
+  <files>
+    <file src="IgnoreVisibilityMinimod.cs" target="content\Minimods\Minimod.IgnoreVisibilityMinimod.Generated.cs" />
+  </files>
+</package>

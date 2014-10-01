@@ -15,14 +15,14 @@ using Minimod.PrettyTypeSignatures;
 namespace Minimod.PrettyPrint
 {
     /// <summary>
-    /// <h1>Minimod.PrettyPrint, Version 0.8.9, Copyright © Lars Corneliussen 2011</h1>
+    /// <h1>Minimod.PrettyPrint, Version 1.0.1, Copyright © Lars Corneliussen 2011</h1>
     /// <para>Creates nice textual representations of any objects. Mostly meant for debug/informational output.</para>
     /// </summary>
     /// <remarks>
     /// Licensed under the Apache License, Version 2.0; you may not use this file except in compliance with the License.
     /// http://www.apache.org/licenses/LICENSE-2.0
     /// </remarks>
-    public static class PrettyPrintMinimod
+    internal static class PrettyPrintMinimod
     {
         #region Settings
 
@@ -437,6 +437,11 @@ namespace Minimod.PrettyPrint
                 return enumerable(anyObject as IEnumerable, declaredType, settings);
             }
 
+            if (declaredType.IsEnum && Enum.IsDefined(declaredType, anyObject))
+            {
+                return String.Format("<{0}.{1} = {2}>", declaredType.Name, Enum.GetName(declaredType, anyObject), (int)anyObject);
+            }
+
             return GenericFormatter.Format(actualType, anyObject, settings);
         }
 
@@ -537,7 +542,8 @@ namespace Minimod.PrettyPrint
             {
                 var properties =
                     from prop in actualType.GetMembers().OfType<PropertyInfo>()
-                    where !prop.GetGetMethod().IsStatic && prop.GetIndexParameters().Length == 0
+                    let getMethod = prop.GetGetMethod()
+                    where getMethod != null && !getMethod.IsStatic && prop.GetIndexParameters().Length == 0
                     let safeValue = getValueOrException(anyObject, () => prop.GetValue(anyObject, new object[0]))
                     select
                         new

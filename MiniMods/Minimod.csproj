@@ -76,6 +76,9 @@
       <HintPath>..\packages\NUnit.2.5.10.11092\lib\nunit.framework.dll</HintPath>
     </Reference>
     <Reference Include="PresentationCore" />
+    <Reference Include="RabbitMQ.Client">
+      <HintPath>..\packages\RabbitMQ.Client.2.8.1\lib\net30\RabbitMQ.Client.dll</HintPath>
+    </Reference>
     <Reference Include="SharpTestsEx">
       <HintPath>..\packages\SharpTestsEx.1.1.1\lib\SharpTestsEx.dll</HintPath>
     </Reference>
@@ -90,9 +93,14 @@
     <Reference Include="System.ServiceModel" />
     <Reference Include="System.Web" />
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Web.Mvc, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AssertUniqueness\AssertUniquenessMinimod.cs" />
     <Compile Include="Continuation\ContinuationMinimod.cs" />
+    <Compile Include="IgnoreVisibilityMinimod\IgnoreVisibilityMinimod.cs" />
+    <Compile Include="FluentHashes\FluentHashesMinimod.cs" />
+    <Compile Include="Mvc3JsonNetResult\Mvc3JsonNetResult.cs" />
     <Compile Include="HttpMessageStream\HttpContext.cs" />
     <Compile Include="HttpMessageStream\HttpMessageProcessorMinimod.cs" />
     <Compile Include="HttpMessageStream\HttpMessageStreamMinimod.cs" />
@@ -142,9 +150,12 @@
     <Compile Include="MVVM\MVVMMinimod.cs" />
     <Compile Include="EventSourcing\EventSource.cs" />
     <Compile Include="EventSourcing\RxEventSourcingMinimod.cs" />
+    <Compile Include="RabbitMqTopicsMessageStream\RabbitMqTopicsMessageStreamMinimod.cs" />
+    <Compile Include="RabbitMqTopicsMessageStream\RabbitMqTopicsMessageStreamSample.cs" />
     <Compile Include="RxEventRepository\RxEventRepositoryMinimod.cs" />
     <Compile Include="RxEventRepository\RxEventRepositoryMinimodSamples.cs" />
     <Compile Include="RxMessageBroker\RxMessageBrokerMinimod.cs" />
+    <Compile Include="String2Enum\String2EnumMinimod.cs" />
     <Compile Include="ThreadVariable\RealWorldExample.cs" />
     <Compile Include="ThreadVariable\TestHelper.cs" />
     <Compile Include="ThreadVariable\ThreadVariable.cs" />
@@ -155,6 +166,15 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Continuation\ContinuationMinimod.nuspec" />
+    <None Include="IgnoreVisibilityMinimod\IgnoreVisibilityMinimod.nuspec">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="FluentHashes\FluentHashesMinimod.nuspec">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Mvc3JsonNetResult\Mvc3JsonNetResult.nuspec">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="HttpMessageStream\HttpMessageStreamMinimod.nuspec" />
     <None Include="MessageProcessor\MessageProcessorMinimod.nuspec" />
     <None Include="FluentNullOrEmpty\FluentNullOrEmptyMinimod.nuspec" />
@@ -187,10 +207,14 @@
     </None>
     <None Include="MVVM\MVVMMinimod.nuspec" />
     <None Include="EventSourcing\RxEventSourcingMinimod.nuspec" />
+    <None Include="RabbitMqTopicsMessageStream\RabbitMqTopicsMessageStreamMinimod.nuspec" />
     <None Include="RxEventRepository\RxEventRepositoryMinimod.nuspec" />
     <None Include="RxMessageBroker\RxMessageBrokerMinimod.nuspec" />
+    <None Include="String2Enum\String2EnumMinimod.nuspec" />
     <None Include="ThreadVariable\Minimod.ThreadVariable.0.9.nupkg" />
-    <None Include="ThreadVariable\ThreadVariableMinimod.nuspec" />
+    <None Include="ThreadVariable\ThreadVariableMinimod.nuspec">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="WebSocketMessageStream\WebSocketMessageStreamMinimod.nuspec" />
     <None Include="ZeroMqMessageStream\ZeroMqMessageStreamMinimod.nuspec" />
   </ItemGroup>
