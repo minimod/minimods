@@ -27,6 +27,57 @@ namespace Minimod.PrettyPrint
             Console.WriteLine(value);
             Console.WriteLine(value.PrettyPrint());
         }
+
+        class A
+        {
+            public int i;
+            public A a;
+        }
+
+        [Test]
+        public void PrettyPrintRecursiveTypes()
+        {
+            var tail = new A { i = 0 };
+            var head = new A { a = tail, i = 1 };
+            tail.a = head;
+
+            Console.WriteLine(head.PrettyPrint());
+            Console.WriteLine(tail.PrettyPrint());
+        }
+
+        [Test]
+        public void PrettyPrintDeepRecusion()
+        {
+            var tail = new A { i = 0 };
+            var head = tail;
+
+            for (var i = 1; i < 100; ++i)
+            {
+                head = new A { a = head, i = i };
+            }
+
+            tail.a = head;
+
+            Console.WriteLine(head.PrettyPrint());
+            Console.WriteLine(tail.PrettyPrint());
+        }
+
+        class B
+        {
+            public int i;
+            public IEnumerable<B> bs;
+        }
+
+        [Test]
+        public void PrettyPrintEnumerable()
+        {
+            var tail = new B { i = 0 };
+            var head = new B { i = 1, bs = new B[] { tail } };
+            tail.bs = new [] { head };
+
+            Console.WriteLine(head.PrettyPrint());
+            Console.WriteLine(tail.PrettyPrint());
+        }
     }
 
     [TestFixture]
