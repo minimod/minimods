@@ -281,6 +281,24 @@ Germany"
 
             actual.Should().Be(expected);
         }
+
+        [Test]
+        public void PrettyPrint_DetectLoop()
+        {
+            var n1 = new Node();
+            var n2 = new Node();
+            n1.Subnode = n2;
+            n2.Subnode = n1;
+            
+            testAndLog(() => n1, @"<Node> {
+  Subnode = <Node> { Subnode = <loop, Node> }
+}");
+        }
+    }
+
+    public class Node
+    {
+        public Node Subnode { get; set; }
     }
 
     public class NoContents

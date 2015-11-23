@@ -15,7 +15,7 @@ using Minimod.PrettyTypeSignatures;
 namespace Minimod.PrettyPrint
 {
     /// <summary>
-    /// <h1>Minimod.PrettyPrint, Version 1.0.1, Copyright © Lars Corneliussen 2011</h1>
+    /// <h1>Minimod.PrettyPrint, Version 1.1.0, Copyright © Lars Corneliussen 2011</h1>
     /// <para>Creates nice textual representations of any objects. Mostly meant for debug/informational output.</para>
     /// </summary>
     /// <remarks>
@@ -381,68 +381,100 @@ namespace Minimod.PrettyPrint
 
         public static string PrettyPrint<T>(this T anyObject)
         {
-            return anyObject.PrettyPrint(typeof(T), DefaultSettings);
+            return anyObject.PrettyPrint(typeof(T), DefaultSettings, null);
         }
 
         public static string PrettyPrint<T>(this T anyObject, Settings settings)
         {
-            return anyObject.PrettyPrint(typeof(T), settings);
+            return anyObject.PrettyPrint(typeof(T), settings, null);
+        }
+
+        private static string PrettyPrint<T>(this T anyObject, Settings settings, Stack parents)
+        {
+            return anyObject.PrettyPrint(typeof(T), settings, parents);
         }
 
         public static string PrettyPrint<T>(this T anyObject, Func<Settings, Settings> customize)
         {
-            return anyObject.PrettyPrint(typeof(T), customize(CreateCustomSettings()));
+            return anyObject.PrettyPrint(typeof(T), customize(CreateCustomSettings()), null);
         }
+
 
         public static string PrettyPrint(this object anyObject, Type declaredType)
         {
-            return anyObject.PrettyPrint(declaredType, DefaultSettings);
+            return anyObject.PrettyPrint(declaredType, DefaultSettings, null);
         }
 
         public static string PrettyPrint(this object anyObject, Type declaredType, Func<Settings, Settings> customize)
         {
-            return anyObject.PrettyPrint(declaredType, customize(DefaultSettings));
+            return anyObject.PrettyPrint(declaredType, customize(DefaultSettings), null);
+        }
+
+        private static string PrettyPrint(this object anyObject, Type declaredType, Func<Settings, Settings> customize, Stack parents)
+        {
+            return anyObject.PrettyPrint(declaredType, customize(DefaultSettings), parents);
         }
 
         public static string PrettyPrint(this object anyObject, Type declaredType, Settings settings)
         {
+            return anyObject.PrettyPrint(declaredType, settings, null);
+        }
+
+        private static string PrettyPrint(this object anyObject, Type declaredType, Settings settings, Stack parents)
+        {
+            parents = parents ?? new Stack();
             if (anyObject == null)
             {
                 return "<null" + (declaredType != typeof(object) ? ", " + declaredType.GetPrettyName() : "") + ">";
             }
 
-            var formatter = settings.GetCustomFormatter(anyObject);
-            if (formatter != null)
+            if (parents.Contains(anyObject))
             {
-                return formatter(anyObject);
+                return "<loop" + (declaredType != typeof(object) ? ", " + declaredType.GetPrettyName() : "") + ">";
             }
 
-            var actualType = anyObject.GetType();
+            parents.Push(anyObject);
 
-            if (anyObject is string)
+            try
             {
-                var s = (string)anyObject;
-                return s == String.Empty
-                           ? "<String.Empty>"
-                           : s;
-            }
 
-            if (actualType.IsPrimitive)
+                var formatter = settings.GetCustomFormatter(anyObject);
+                if (formatter != null)
+                {
+                    return formatter(anyObject);
+                }
+
+                var actualType = anyObject.GetType();
+
+                if (anyObject is string)
+                {
+                    var s = (string) anyObject;
+                    return s == String.Empty
+                        ? "<String.Empty>"
+                        : s;
+                }
+
+                if (actualType.IsPrimitive)
+                {
+                    return anyObject.ToString();
+                }
+
+                if (anyObject is IEnumerable)
+                {
+                    return enumerable(anyObject as IEnumerable, declaredType, settings);
+                }
+
+                if (declaredType.IsEnum && Enum.IsDefined(declaredType, anyObject))
+                {
+                    return String.Format("<{0}.{1} = {2}>", declaredType.Name, Enum.GetName(declaredType, anyObject), (int) anyObject);
+                }
+
+                return GenericFormatter.Format(actualType, anyObject, settings, parents);
+            }
+            finally
             {
-                return anyObject.ToString();
+                parents.Pop();
             }
-
-            if (anyObject is IEnumerable)
-            {
-                return enumerable(anyObject as IEnumerable, declaredType, settings);
-            }
-
-            if (declaredType.IsEnum && Enum.IsDefined(declaredType, anyObject))
-            {
-                return String.Format("<{0}.{1} = {2}>", declaredType.Name, Enum.GetName(declaredType, anyObject), (int)anyObject);
-            }
-
-            return GenericFormatter.Format(actualType, anyObject, settings);
         }
 
         #endregion
@@ -501,17 +533,17 @@ namespace Minimod.PrettyPrint
                 public string Pretty { get; set; }
             }
 
-            public static string Format(Type actualType, object anyObject, Settings settings)
+            public static string Format(Type actualType, object anyObject, Settings settings, Stack parents)
             {
                 if (actualType == null) throw new ArgumentNullException("actualType");
                 if (anyObject == null) throw new ArgumentNullException("anyObject");
                 if (settings == null) throw new ArgumentNullException("settings");
 
                 var members =
-                    findAndFormatMembers(anyObject, settings, actualType)
+                    findAndFormatMembers(anyObject, settings, actualType, parents)
                         .Where(m => m.Value != null || (settings.OmitsNullMembers ?? false))
                         .ToArray();
-
+                
                 string result;
 
                 if (mayFormatKeyValuePairs(members, out result))
@@ -538,7 +570,7 @@ namespace Minimod.PrettyPrint
             }
 
             private static IEnumerable<MemberDetails> findAndFormatMembers(object anyObject, Settings settings,
-                                                                           Type actualType)
+                                                                           Type actualType, Stack parents)
             {
                 var properties =
                     from prop in actualType.GetMembers().OfType<PropertyInfo>()
@@ -581,13 +613,13 @@ namespace Minimod.PrettyPrint
                     {
                         pretty = hasCustomFormatter
                                      ? propFormatter(m.value, m.name, anyObject, settings)
-                                     : m.value.PrettyPrint(m.type, settings);
+                                     : m.value.PrettyPrint(m.type, settings, parents);
                     }
                     else
                     {
                         pretty = hasCustomErrorFormatter
                             ? propErrorFormatter(m.error, m.name, anyObject, settings)
-                            : new { Name = "threw ", Exception = m.error }.PrettyPrint(settings);
+                            : new { Name = "threw ", Exception = m.error }.PrettyPrint(settings, parents);
                     }
 
                     if (pretty != null)
