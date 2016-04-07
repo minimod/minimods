@@ -6,7 +6,7 @@ using System.Text.RegularExpressions;
 namespace Minimod.PrettyText
 {
     /// <summary>
-    /// <h1>Minimod.PrettyText, Version 2.0.0, Copyright © Lars Corneliussen 2011</h1>
+    /// <h1>Minimod.PrettyText, Version 2.0.1, Copyright © Lars Corneliussen 2011</h1>
     /// <para>A minimod with string extensions, helping whereever you have to shape text to fit into a box.</para>
     /// </summary>
     /// <remarks>
@@ -146,9 +146,13 @@ namespace Minimod.PrettyText
                 if (firstLine && options.HasAnyFlag(options))
                 {
                     yield return line;
+                    firstLine = false;
                 }
+                else
+                {
 
-                yield return new string(' ', leadingSpaces) + line;
+                    yield return new string(' ', leadingSpaces) + line;
+                }
             }
         }
 
