@@ -6,7 +6,11 @@
     <owners>Mike Bild</owners>
     <licenseUrl>http://www.apache.org/licenses/LICENSE-2.0</licenseUrl>
     <dependencies>
-      <dependency id="Rx_Experimental-Main" />
+      <dependency id="Rx-Core" />
+      <dependency id="Rx-Interfaces" />
+      <dependency id="Rx-Linq" />
+      <dependency id="Rx-Main" />
+      <dependency id="Rx-PlatformServices" />
     </dependencies>
     <id>Minimod.MessageProcessor</id>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
